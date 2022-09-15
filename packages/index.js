@@ -1,5 +1,17 @@
 import BaseTable from "./base-table";
-const components = [BaseTable];
+import BasePagination from "./base-pagination";
+import BaseForm from "./base-form";
+import BaseList from "./base-list";
+import BaseSelect from "./base-select";
+import BaseInput from "./base-input";
+const components = [
+  BaseTable,
+  BasePagination,
+  BaseForm,
+  BaseList,
+  BaseSelect,
+  BaseInput,
+];
 
 const install = function (Vue) {
   components.forEach((component) => {
@@ -14,4 +26,6 @@ if (typeof window !== "undefined" && window.Vue) {
 export default {
   install,
   BaseTable,
+  BasePagination,
+  BaseForm,
 };
