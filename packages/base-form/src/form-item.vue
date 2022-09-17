@@ -1,7 +1,7 @@
 <template>
   <el-form-item :label="label" :prop="prop" :label-width="labelWidth">
     <component
-      :is="'form-' + type"
+      :is="'form-' + kind"
       :prop="prop"
       v-bind="$attrs"
       v-on="$listeners"
@@ -20,10 +20,13 @@ export default {
   props: {
     label: String,
     prop: String,
-    type: String,
+    kind: {
+      type: String,
+      required: true,
+    },
     labelWidth: {
       type: String,
-      default: "auto",
+      default: "120px",
     },
   },
 };

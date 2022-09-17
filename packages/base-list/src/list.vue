@@ -1,11 +1,17 @@
 <template>
   <div>
-    <base-form v-bind="getFormConfig().attrs" v-on="getFormConfig().listeners">
+    <base-form
+      query
+      :fields="fields"
+      v-bind="getFormConfig().attrs"
+      v-on="getFormConfig().listeners"
+    >
       <template #[slotName] v-for="(_, slotName) in conditionSlots">
         <slot :name="slotName" />
       </template>
     </base-form>
     <base-table
+      :fields="fields"
       v-bind="getTableConfig().attrs"
       v-on="getTableConfig().listeners"
     >
@@ -20,6 +26,12 @@
 <script>
 export default {
   name: "BaseList",
+  props: {
+    fields: {
+      type: Object,
+      default: () => {},
+    },
+  },
   computed: {
     conditionSlots() {
       return this.$slots?.condition || {};

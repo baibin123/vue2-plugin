@@ -2,7 +2,7 @@
   <base-list
     :table-data="tableData"
     :form-data="formData"
-    :model="formModel"
+    :fields="fields"
     :columns="columns"
     @onRemove="removeClick"
     @onDetail="detailClick"
@@ -20,17 +20,29 @@ export default {
   components: {},
   data() {
     return {
+      fields: {
+        name: "姓名",
+        date: "出生日期",
+        gender: "性别",
+        address: "地址",
+      },
       formData: [
-        { type: "input", prop: "name", label: "姓名" },
-        { type: "input", prop: "date", label: "出生日期" },
-        { type: "select", prop: "gender", label: "性别" },
+        { prop: "name", kind: "input" },
+        { prop: "date", kind: "datepicker", type: "date" },
+        {
+          prop: "gender",
+          kind: "select",
+          options: [
+            { label: "男", value: 1 },
+            { label: "女", value: 2 },
+          ],
+        },
       ],
-      formModel: { name: "张三", date: "2022-02-02" },
       columns: [
-        { prop: "name", label: "姓名" },
-        { prop: "date", label: "出生日期" },
-        { prop: "gender", label: "性别" },
-        { prop: "address", label: "出生地址" },
+        { prop: "name" },
+        { prop: "date" },
+        { prop: "gender" },
+        { prop: "address" },
       ],
       tableData: [
         {
@@ -59,13 +71,6 @@ export default {
         },
       ],
     };
-  },
-  created() {
-    //let i = 0;
-    // setInterval(() => {
-    //   this.formModel.name = "李思" + i;
-    //   i++;
-    // }, 1000);
   },
   methods: {
     removeClick(data) {

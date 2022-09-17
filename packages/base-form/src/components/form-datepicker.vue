@@ -1,17 +1,33 @@
 <template>
-  <el-input v-model="innerValue" :clearable="clearable" v-bind="$attrs" />
+  <el-date-picker
+    v-model="innerValue"
+    :clearable="clearable"
+    style="width: 100%"
+    placement="bottom-start"
+    :placeholder="placeholder"
+    :value-format="valueFormat"
+    v-bind="$attrs"
+  />
 </template>
 
 <script>
 export default {
-  name: "form-input",
+  name: "form-datepicker",
   inject: ["formModel", "setFormModel"],
   props: {
     clearable: {
       type: Boolean,
       default: true,
     },
-    value: [String, Number],
+    value: [String, Date],
+    placeholder: {
+      type: String,
+      default: "请选择时间",
+    },
+    valueFormat: {
+      type: String,
+      default: "yyyy-MM-dd",
+    },
   },
   data() {
     return {

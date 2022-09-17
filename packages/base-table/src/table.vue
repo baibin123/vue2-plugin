@@ -4,11 +4,13 @@
       <el-table-column
         v-if="!$scopedSlots[col.prop]"
         :key="col.prop"
+        :label="col.label || (fields && fields[col.prop])"
         v-bind="col"
       />
       <el-table-column
         v-else-if="$scopedSlots[col.prop]"
         :key="col.prop"
+        :label="col.label || (fields && fields[col.prop])"
         v-bind="col"
       >
         <template slot-scope="scope">
@@ -55,6 +57,10 @@ export default {
   props: {
     tableData: Array,
     columns: Array,
+    fields: {
+      type: Object,
+      default: () => {},
+    },
   },
 };
 </script>

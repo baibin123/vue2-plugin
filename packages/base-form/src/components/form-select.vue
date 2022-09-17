@@ -1,10 +1,17 @@
 <template>
   <el-select
-    v-model="value"
+    v-model="innerValue"
     :clearable="clearable"
     v-bind="$attrs"
     style="width: 100%"
-  />
+  >
+    <el-option
+      v-for="opt of options"
+      :key="opt.value"
+      :value="opt.value"
+      :label="opt.label"
+    />
+  </el-select>
 </template>
 
 <script>
@@ -16,19 +23,27 @@ export default {
       type: Boolean,
       default: true,
     },
+    options: {
+      type: Array,
+      default: () => [],
+    },
+    value: [String, Number],
   },
   data() {
     return {
-      value: undefined,
+      innerValue: undefined,
     };
   },
   watch: {
-    value(nv, ov) {
-      if (nv !== ov) this.setFormModel(this.prop, nv);
+    innerValue(nv, ov) {
+      if (nv !== ov) this.setFormModel(this.$attrs.prop, nv);
     },
-  },
-  created() {
-    this.value = this.formModel[this.prop];
+    value: {
+      handler: function (nv, ov) {
+        if (nv !== ov) this.innerValue = this.value;
+      },
+      immediate: true,
+    },
   },
 };
 </script>

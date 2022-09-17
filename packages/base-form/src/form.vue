@@ -1,12 +1,37 @@
 <template>
-  <el-form :model="innerModal" v-bind="$attrs" v-on="$listeners">
+  <el-form
+    :model="innerModal"
+    v-bind="$attrs"
+    v-on="$listeners"
+    :label-position="labelPosition"
+    align="bottom"
+    class="common-form"
+  >
     <el-row :gutter="20">
       <el-col
         v-for="item of formData"
         :key="item.prop"
         :span="item.span || formSpan"
       >
-        <form-item v-bind="item" />
+        <form-item
+          :value="innerModal[item.prop]"
+          :label="$attrs.label || (fields && fields[item.prop])"
+          v-bind="item"
+        />
+      </el-col>
+      <el-col :span="btnSpan" v-if="showBtn">
+        <el-form-item v-if="$scopedSlots['customer-btns']">
+          <slot name="customer-btns"></slot>
+        </el-form-item>
+        <el-form-item v-else-if="query" label="操作" class="form-btn-container">
+          <el-button @click="onReset">重置</el-button>
+          <el-button type="primary" @click="onQuery">查询</el-button>
+          <slot name="query-other-btn"></slot>
+        </el-form-item>
+        <el-form-item v-else>
+          <el-button @click="onCancel">取消</el-button>
+          <el-button type="primary" @click="onSave">保存</el-button>
+        </el-form-item>
       </el-col>
     </el-row>
   </el-form>
@@ -20,7 +45,7 @@ export default {
     return {
       formModel: this.innerModal,
       setFormModel: (key, val) => {
-        this.formModel[key] = val;
+        this.innerModal[key] = val;
       },
     };
   },
@@ -28,6 +53,14 @@ export default {
   props: {
     rules: Array,
     model: Object,
+    showBtn: {
+      type: Boolean,
+      default: true,
+    },
+    fields: {
+      type: Object,
+      default: () => {},
+    },
     formData: {
       type: Array,
       required: true,
@@ -35,8 +68,17 @@ export default {
     },
     formSpan: {
       type: Number,
-      default: 8,
+      default: 6,
     },
+    btnSpan: {
+      type: Number,
+      default: 6,
+    },
+    labelPosition: {
+      type: String,
+      default: "top",
+    },
+    query: Boolean,
   },
   watch: {
     model: {
@@ -49,6 +91,7 @@ export default {
   },
   data() {
     return {
+      text: "",
       innerModal: {},
     };
   },
@@ -60,8 +103,33 @@ export default {
       );
     }
   },
-  methods: {},
+  methods: {
+    onReset() {
+      Object.keys(this.innerModal).forEach(
+        (key) => (this.innerModal[key] = undefined)
+      );
+    },
+    onQuery() {
+      console.log(this.innerModal);
+    },
+    onCancel() {
+      this.$emit("on-cancel");
+    },
+    onSave() {
+      this.$emit("on-save", this.innerModal);
+    },
+  },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+>>> .form-btn-container .el-form-item__label {
+  color: transparent;
+}
+.common-form {
+  padding: 0 10px;
+}
+>>> .common-form .el-form-item__label {
+  padding: 0;
+}
+</style>
