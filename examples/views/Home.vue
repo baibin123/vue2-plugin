@@ -1,15 +1,15 @@
 <template>
   <base-list
-    :table-data="tableData"
+    url="/portal/api/dryingPlan/findDryingPlan"
     :form-data="formData"
     :fields="fields"
     :columns="columns"
-    @onRemove="removeClick"
-    @onDetail="detailClick"
-    @onEdit="editClick"
   >
-    <template #gender="{ row }">
-      <span>{{ row.gender }}</span>
+    <template #planTime="{ row }">
+      <span>{{ row.planStartDate }} - {{ row.planEndDate }}</span>
+    </template>
+    <template #status="{ row }">
+      <span>{{ row.status | status }}</span>
     </template>
   </base-list>
 </template>
@@ -21,16 +21,25 @@ export default {
   data() {
     return {
       fields: {
-        name: "姓名",
-        date: "出生日期",
-        gender: "性别",
-        address: "地址",
+        planOrderNo: "计划单号",
+        createTime: "创建日期",
+        sourceName: "计划来源",
+        executionCompanyName: "执行单位",
+        siteName: "库点",
+        productNameName: "商品名称",
+        productCategoriesName: "商品类别",
+        planMarginQuantity: "总计划量(吨)",
+        waterStandard: "水分标准",
+        cerealLevelName: "等级",
+        headcount: "人员",
+        planTime: "计划时限",
+        status: "状态",
       },
       formData: [
-        { prop: "name", kind: "input" },
-        { prop: "date", kind: "datepicker", type: "date" },
+        { prop: "planOrderNo", kind: "input" },
+        { prop: "createTime", kind: "datepicker", type: "date" },
         {
-          prop: "gender",
+          prop: "sourceName",
           kind: "select",
           options: [
             { label: "男", value: 1 },
@@ -39,48 +48,26 @@ export default {
         },
       ],
       columns: [
-        { prop: "name" },
-        { prop: "date" },
-        { prop: "gender" },
-        { prop: "address" },
-      ],
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          gender: "男",
-          address: "上海市普陀区金沙江路 1518 弄",
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          gender: "男",
-          address: "上海市普陀区金沙江路 1517 弄",
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          gender: "男",
-          address: "上海市普陀区金沙江路 1519 弄",
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          gender: "男",
-          address: "上海市普陀区金沙江路 1516 弄",
-        },
+        "planOrderNo",
+        "createTime",
+        "sourceName",
+        "executionCompanyName",
+        "siteName",
+        "productNameName",
+        "productCategoriesName",
+        "planMarginQuantity",
+        "waterStandard",
+        "cerealLevelName",
+        "headcount",
+        "planTime",
+        "status",
       ],
     };
   },
-  methods: {
-    removeClick(data) {
-      console.log(data);
-    },
-    detailClick(data) {
-      console.log(data);
-    },
-    editClick(data) {
-      console.log(data);
+  filters: {
+    status(val) {
+      if (val === 1) return "代执行";
+      else return "已执行";
     },
   },
 };

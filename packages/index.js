@@ -28,4 +28,7 @@ export default {
   BaseTable,
   BasePagination,
   BaseForm,
+  BaseList,
+  BaseSelect,
+  BaseInput,
 };

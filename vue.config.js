@@ -22,5 +22,14 @@ module.exports = {
         "@": path.join(__dirname, "examples"),
       },
     },
+    devServer: {
+      proxy: {
+        '/*': {
+          target: 'https://t-waasapi.xydti.com',
+          changeOrigin: true,
+          ws: false,
+        },
+      },
+    },
   },
 };

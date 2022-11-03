@@ -24,8 +24,8 @@
           <slot name="customer-btns"></slot>
         </el-form-item>
         <el-form-item v-else-if="query" label="操作" class="form-btn-container">
-          <el-button @click="onReset">重置</el-button>
           <el-button type="primary" @click="onQuery">查询</el-button>
+          <el-button @click="onReset">重置</el-button>
           <slot name="query-other-btn"></slot>
         </el-form-item>
         <el-form-item v-else>
@@ -108,9 +108,10 @@ export default {
       Object.keys(this.innerModal).forEach(
         (key) => (this.innerModal[key] = undefined)
       );
+      this.$emit("on-search", {});
     },
     onQuery() {
-      console.log(this.innerModal);
+      this.$emit("on-search", this.innerModal);
     },
     onCancel() {
       this.$emit("on-cancel");
@@ -129,7 +130,7 @@ export default {
 .common-form {
   padding: 0 10px;
 }
->>> .common-form .el-form-item__label {
-  padding: 0;
+.common-form >>> .el-form-item__label {
+  padding: 0 !important;
 }
 </style>
