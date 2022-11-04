@@ -4,6 +4,7 @@ import BaseForm from "./base-form";
 import BaseList from "./base-list";
 import BaseSelect from "./base-select";
 import BaseInput from "./base-input";
+import RemoteSelect from "./remote-select";
 const components = [
   BaseTable,
   BasePagination,
@@ -11,6 +12,7 @@ const components = [
   BaseList,
   BaseSelect,
   BaseInput,
+  RemoteSelect,
 ];
 
 const install = function (Vue) {
@@ -31,4 +33,5 @@ export default {
   BaseList,
   BaseSelect,
   BaseInput,
+  RemoteSelect,
 };

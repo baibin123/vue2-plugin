@@ -5,7 +5,7 @@
     remote
     reserve-keyword
     :placeholder="placeholder"
-    :remote-method="debounceMethod"
+    :remote-method="remoteMethod"
     :loading="loading"
     @change="change"
     style="width: 100%"
@@ -27,13 +27,12 @@
 </template>
 
 <script>
-import http from "../../http";
-import _ from "lodash";
+import { POST } from "../../http";
 
 export default {
   name: "RemoteSelect",
   props: {
-    value: [String, Number],
+    value: [String, Number, Array],
     url: {
       type: String,
       required: true,
@@ -41,11 +40,11 @@ export default {
     params: Object,
     labelKey: {
       type: String,
-      default: "label",
+      default: "name",
     },
     valueKey: {
       type: String,
-      default: "value",
+      default: "id",
     },
     labelDisKey: String,
     labelDisStyle: Object,
@@ -62,10 +61,7 @@ export default {
       default: "data",
     },
     filterable: Boolean,
-    placeholder: {
-      type: String,
-      default: "请输入关键字",
-    },
+    placeholder: String,
     clearable: {
       type: Boolean,
       default: true,
@@ -89,10 +85,8 @@ export default {
       },
       immediate: true,
     },
-    params: function (newVal, oldVal) {
-      if (!_.isEqual(newVal, oldVal)) {
-        this.remoteMethod();
-      }
+    params: function () {
+      this.remoteMethod();
     },
   },
   created() {
@@ -108,8 +102,7 @@ export default {
         [this.searchKey]: query,
       };
       this.loading = true;
-      http
-        .POST(this.url, params)
+      POST(this.url, params)
         .then((res) => {
           this.loading = false;
           this.options = res[this.primaryKey].map((item) => {
@@ -127,9 +120,6 @@ export default {
           return err;
         });
     },
-    debounceMethod: _.debounce(function (query) {
-      this.remoteMethod(query);
-    }, 300),
     change(value) {
       this.$emit("change", this.innerValue);
       this.$emit(

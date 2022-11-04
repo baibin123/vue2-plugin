@@ -15,7 +15,7 @@
       >
         <form-item
           :value="innerModal[item.prop]"
-          :label="$attrs.label || (fields && fields[item.prop])"
+          :label="item.label || (fields && fields[item.prop])"
           v-bind="item"
         />
       </el-col>
@@ -41,6 +41,12 @@
 import FormItem from "./form-item";
 export default {
   name: "BaseForm",
+  inject: {
+    baseList: {
+      from: "baseList",
+      default: () => ({}),
+    },
+  },
   provide() {
     return {
       formModel: this.innerModal,
@@ -109,9 +115,11 @@ export default {
         (key) => (this.innerModal[key] = undefined)
       );
       this.$emit("on-search", {});
+      this.baseList.onSearch && this.baseList.onSearch({});
     },
     onQuery() {
       this.$emit("on-search", this.innerModal);
+      this.baseList.onSearch && this.baseList.onSearch(this.innerModal);
     },
     onCancel() {
       this.$emit("on-cancel");

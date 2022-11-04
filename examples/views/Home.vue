@@ -1,17 +1,21 @@
 <template>
-  <base-list
-    url="/portal/api/dryingPlan/findDryingPlan"
-    :form-data="formData"
-    :fields="fields"
-    :columns="columns"
-  >
-    <template #planTime="{ row }">
-      <span>{{ row.planStartDate }} - {{ row.planEndDate }}</span>
-    </template>
-    <template #status="{ row }">
-      <span>{{ row.status | status }}</span>
-    </template>
-  </base-list>
+  <div>
+    <base-list
+      url="/portal/api/dryingPlan/findDryingPlan"
+      :fields="fields"
+      :columns="columns"
+    >
+      <template #condition>
+        <base-form :form-data="formData" :fields="fields" query />
+      </template>
+      <template #planTime="{ row }">
+        <span>{{ row.planStartDate }} - {{ row.planEndDate }}</span>
+      </template>
+      <template #status="{ row }">
+        <span>{{ row.status | status }}</span>
+      </template>
+    </base-list>
+  </div>
 </template>
 
 <script>
@@ -37,6 +41,14 @@ export default {
       },
       formData: [
         { prop: "planOrderNo", kind: "input" },
+        {
+          prop: "executionCompanyCode",
+          url: "/portal/api/common/selectXyCompanyList",
+          params: { level: 1 },
+          kind: "remote-select",
+          multiple: true,
+          label: "执行单位",
+        },
         { prop: "createTime", kind: "datepicker", type: "date" },
         {
           prop: "sourceName",

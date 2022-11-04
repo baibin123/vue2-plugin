@@ -1,14 +1,7 @@
 <template>
   <div>
-    <slot v-if="$scopedSlots.condition" />
-    <base-form
-      ref="baseForm"
-      v-else
-      query
-      v-bind="getFormConfig().attrs"
-      v-on="getFormConfig().listeners"
-      @on-search="onSearch"
-    />
+    <slot v-if="$scopedSlots.condition" name="condition" />
+    <base-form ref="baseForm" v-else query v-bind="$attrs" v-on="$listeners" />
     <base-table
       :table-data="tableData"
       :highlight-current-row="true"
@@ -24,7 +17,7 @@
 </template>
 
 <script>
-import request from "../../http";
+import { POST } from "../../http";
 export default {
   name: "BaseList",
   props: {
@@ -32,6 +25,11 @@ export default {
       type: String,
       required: true,
     },
+  },
+  provide() {
+    return {
+      baseList: this,
+    };
   },
   data() {
     return {
@@ -55,53 +53,18 @@ export default {
     this.searchData();
   },
   methods: {
-    getFormConfig() {
-      const attrs = [
-        "form-data",
-        "model",
-        "rules",
-        "form-span",
-        "size",
-        "fields",
-      ];
-      const listeners = [];
-      return {
-        attrs: this.transferAttr(attrs),
-        listeners: this.transferListeners(listeners),
-      };
-    },
-    getTableConfig() {
-      const attrs = ["columns", "size", "fields", "highlight-current-row"];
-      const listeners = [];
-      return {
-        attrs: this.transferAttr(attrs),
-        listeners: this.transferListeners(listeners),
-      };
-    },
-    transferAttr(attrs) {
-      return attrs.reduce(
-        (obj, key) => ({ ...obj, [key]: this.$attrs?.[key] }),
-        {}
-      );
-    },
-    transferListeners(attrs) {
-      return attrs.reduce(
-        (obj, key) => ({ ...obj, [key]: this.$listeners?.[key] }),
-        {}
-      );
-    },
     onSearch(params) {
       this.page = { pageSize: 10, pageNum: 1 };
       this.searchParams = params;
       this.searchData();
     },
     searchData() {
-      request
-        .POST(this.url, { ...this.searchParams, ...this.page })
-        .then(({ data }) => {
+      POST(this.url, { ...this.searchParams, ...this.page }).then(
+        ({ data }) => {
           this.tableData = data.records;
           this.total = data.total;
-        });
+        }
+      );
     },
   },
 };

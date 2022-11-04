@@ -16,6 +16,9 @@ module.exports = {
       chunks: ["chunk-vendors", "chunk-common", "index"],
     },
   },
+  css: {
+    extract: false, // 是否使用css分离插件 ExtractTextPlugin
+  },
   configureWebpack: {
     resolve: {
       alias: {
@@ -24,8 +27,8 @@ module.exports = {
     },
     devServer: {
       proxy: {
-        '/*': {
-          target: 'https://t-waasapi.xydti.com',
+        "/*": {
+          target: "https://t-waasapi.xydti.com",
           changeOrigin: true,
           ws: false,
         },

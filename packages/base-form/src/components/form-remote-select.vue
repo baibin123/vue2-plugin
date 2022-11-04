@@ -7,7 +7,7 @@ export default {
   name: "form-remote-select",
   inject: ["formModel", "setFormModel"],
   props: {
-    value: [String, Number],
+    value: [String, Number, Array],
   },
   data() {
     return {
