@@ -4,9 +4,14 @@
       url="/portal/api/dryingPlan/findDryingPlan"
       :fields="fields"
       :columns="columns"
+      :params="prod"
     >
       <template #condition>
-        <base-form :form-data="formData" :fields="fields" query />
+        <base-form :form-data="formData" :model="prod" :fields="fields" query>
+          <template #goods="{ model }">
+            <goods-select v-model="prod" @input="goodsChange(model)" />
+          </template>
+        </base-form>
       </template>
       <template #planTime="{ row }">
         <span>{{ row.planStartDate }} - {{ row.planEndDate }}</span>
@@ -24,6 +29,7 @@ export default {
   components: {},
   data() {
     return {
+      prod: { productCategories: "1000101", productNameCode: "100010101" },
       fields: {
         planOrderNo: "计划单号",
         createTime: "创建日期",
@@ -49,15 +55,14 @@ export default {
           multiple: true,
           label: "执行单位",
         },
-        { prop: "createTime", kind: "datepicker", type: "date" },
         {
-          prop: "sourceName",
-          kind: "select",
-          options: [
-            { label: "男", value: 1 },
-            { label: "女", value: 2 },
-          ],
+          prop: "sourceDeptCode",
+          url: "/portal/api/business/nature/getBusinessNatureList",
+          params: { level: 1, status: 1 },
+          kind: "remote-select",
+          label: "计划来源",
         },
+        { prop: "goods" },
       ],
       columns: [
         "planOrderNo",
@@ -75,6 +80,15 @@ export default {
         "status",
       ],
     };
+  },
+  methods: {
+    goodSelected(params, form) {
+      console.log("params:", params, "form: ", form);
+    },
+    goodsChange(model) {
+      model.productCategories = this.prod.productCategories;
+      model.productNameCode = this.prod.productNameCode;
+    },
   },
   filters: {
     status(val) {

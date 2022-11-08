@@ -1,6 +1,6 @@
 <template>
   <div>
-    <slot v-if="$scopedSlots.condition" name="condition" />
+    <slot ref="slotRef" v-if="$scopedSlots.condition" name="condition" />
     <base-form ref="baseForm" v-else query v-bind="$attrs" v-on="$listeners" />
     <base-table
       :table-data="tableData"
@@ -24,6 +24,10 @@ export default {
     url: {
       type: String,
       required: true,
+    },
+    params: {
+      type: Object,
+      default: () => ({}),
     },
   },
   provide() {
@@ -59,12 +63,14 @@ export default {
       this.searchData();
     },
     searchData() {
-      POST(this.url, { ...this.searchParams, ...this.page }).then(
-        ({ data }) => {
-          this.tableData = data.records;
-          this.total = data.total;
-        }
-      );
+      POST(this.url, {
+        ...this.params,
+        ...this.searchParams,
+        ...this.page,
+      }).then(({ data }) => {
+        this.tableData = data.records;
+        this.total = data.total;
+      });
     },
   },
 };

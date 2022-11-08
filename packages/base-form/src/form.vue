@@ -1,6 +1,6 @@
 <template>
   <el-form
-    :model="innerModal"
+    :model="innerModel"
     v-bind="$attrs"
     v-on="$listeners"
     :label-position="labelPosition"
@@ -8,17 +8,18 @@
     class="common-form"
   >
     <el-row :gutter="20">
-      <el-col
-        v-for="item of formData"
-        :key="item.prop"
-        :span="item.span || formSpan"
-      >
-        <form-item
-          :value="innerModal[item.prop]"
-          :label="item.label || (fields && fields[item.prop])"
-          v-bind="item"
-        />
-      </el-col>
+      <template v-for="item of formData">
+        <span v-if="$scopedSlots[item.prop]" :key="item.prop">
+          <slot :name="item.prop" :model="innerModel" />
+        </span>
+        <el-col v-else :key="item.prop" :span="item.span || formSpan">
+          <form-item
+            :value="innerModel[item.prop]"
+            :label="item.label || (fields && fields[item.prop])"
+            v-bind="item"
+          />
+        </el-col>
+      </template>
       <el-col :span="btnSpan" v-if="showBtn">
         <el-form-item v-if="$scopedSlots['customer-btns']">
           <slot name="customer-btns"></slot>
@@ -49,9 +50,9 @@ export default {
   },
   provide() {
     return {
-      formModel: this.innerModal,
+      formModel: this.innerModel,
       setFormModel: (key, val) => {
-        this.innerModal[key] = val;
+        this.innerModel[key] = val;
       },
     };
   },
@@ -89,7 +90,7 @@ export default {
   watch: {
     model: {
       handler: function (nv) {
-        this.innerModal = nv;
+        this.innerModel = nv;
       },
       immediate: true,
       deep: true,
@@ -98,12 +99,12 @@ export default {
   data() {
     return {
       text: "",
-      innerModal: {},
+      innerModel: {},
     };
   },
   created() {
     if (!this.model) {
-      this.innerModal = this.formData.reduce(
+      this.innerModel = this.formData.reduce(
         (obj, item) => ({ ...obj, [item.prop]: item.value }),
         {}
       );
@@ -111,21 +112,21 @@ export default {
   },
   methods: {
     onReset() {
-      Object.keys(this.innerModal).forEach(
-        (key) => (this.innerModal[key] = undefined)
+      Object.keys(this.innerModel).forEach(
+        (key) => (this.innerModel[key] = undefined)
       );
       this.$emit("on-search", {});
       this.baseList.onSearch && this.baseList.onSearch({});
     },
     onQuery() {
-      this.$emit("on-search", this.innerModal);
-      this.baseList.onSearch && this.baseList.onSearch(this.innerModal);
+      this.$emit("on-search", this.innerModel);
+      this.baseList.onSearch && this.baseList.onSearch(this.innerModel);
     },
     onCancel() {
       this.$emit("on-cancel");
     },
     onSave() {
-      this.$emit("on-save", this.innerModal);
+      this.$emit("on-save", this.innerModel);
     },
   },
 };

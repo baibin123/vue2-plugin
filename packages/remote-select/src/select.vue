@@ -14,7 +14,7 @@
   >
     <el-option
       v-for="item in options"
-      :key="item.value"
+      :key="item.forKey"
       :label="item.label"
       :value="item.value"
     >
@@ -28,6 +28,7 @@
 
 <script>
 import { POST } from "../../http";
+import common from "../../util/common";
 
 export default {
   name: "RemoteSelect",
@@ -38,6 +39,10 @@ export default {
       required: true,
     },
     params: Object,
+    forKey: {
+      type: [String, Number],
+      default: "id",
+    },
     labelKey: {
       type: String,
       default: "name",
@@ -85,8 +90,10 @@ export default {
       },
       immediate: true,
     },
-    params: function () {
-      this.remoteMethod();
+    params: function (nv, ov) {
+      if (!common.isEqual(nv, ov)) {
+        this.remoteMethod();
+      }
     },
   },
   created() {
@@ -126,9 +133,6 @@ export default {
         "on-select",
         this.options.find((item) => item[this.valueKey] === value)
       );
-      if (value && this.filterable) {
-        this.remoteMethod();
-      }
     },
   },
 };

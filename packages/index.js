@@ -1,3 +1,4 @@
+//公用组件
 import BaseTable from "./base-table";
 import BasePagination from "./base-pagination";
 import BaseForm from "./base-form";
@@ -5,6 +6,8 @@ import BaseList from "./base-list";
 import BaseSelect from "./base-select";
 import BaseInput from "./base-input";
 import RemoteSelect from "./remote-select";
+//业务组件
+import GoodSelect from "./business-components/goods-select/src/GoodsSelect";
 const components = [
   BaseTable,
   BasePagination,
@@ -13,6 +16,7 @@ const components = [
   BaseSelect,
   BaseInput,
   RemoteSelect,
+  GoodSelect,
 ];
 
 const install = function (Vue) {
@@ -34,4 +38,5 @@ export default {
   BaseSelect,
   BaseInput,
   RemoteSelect,
+  GoodSelect,
 };
