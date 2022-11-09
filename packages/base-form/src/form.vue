@@ -90,7 +90,9 @@ export default {
   watch: {
     model: {
       handler: function (nv) {
-        this.innerModel = nv;
+        if (nv) {
+          this.innerModel = nv;
+        }
       },
       immediate: true,
       deep: true,
@@ -104,10 +106,16 @@ export default {
   },
   created() {
     if (!this.model) {
-      this.innerModel = this.formData.reduce(
-        (obj, item) => ({ ...obj, [item.prop]: item.value }),
-        {}
-      );
+      this.innerModel = this.formData.reduce((obj, item) => {
+        if (item.keys?.length > 0) {
+          const keyObj = item.keys.reduce((sub, key) => {
+            return { ...sub, [key]: undefined };
+          }, {});
+          return { ...obj, ...keyObj };
+        } else {
+          return { ...obj, [item.prop]: item.value };
+        }
+      }, {});
     }
   },
   methods: {
@@ -115,8 +123,8 @@ export default {
       Object.keys(this.innerModel).forEach(
         (key) => (this.innerModel[key] = undefined)
       );
-      this.$emit("on-search", {});
-      this.baseList.onSearch && this.baseList.onSearch({});
+      this.$emit("on-search", this.innerModel);
+      this.baseList.onSearch && this.baseList.onSearch(this.innerModel);
     },
     onQuery() {
       this.$emit("on-search", this.innerModel);

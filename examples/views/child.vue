@@ -1,6 +1,7 @@
 <template>
   <div>
     <slot name="customer" :model="test" />
+    <el-input :value="test.a" />
   </div>
 </template>
 
@@ -9,15 +10,12 @@ export default {
   name: "child",
   data() {
     return {
-      test: {
-        a: 111,
-      },
+      test: {},
     };
   },
   created() {
-    this.aa = { a: 111 };
+    this.test = { a: 1 };
   },
-  methods: {},
 };
 </script>
 

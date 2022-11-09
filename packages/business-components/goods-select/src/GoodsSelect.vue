@@ -3,23 +3,21 @@
     <el-col :span="span">
       <el-form-item label="货品类别">
         <remote-select
-          v-model="productCategories"
+          v-model="innerProductCategories"
           url="/portal/api/Material/allMaterialMaintenance"
           :params="{ materialLevel: 3 }"
           @on-select="categoryChange"
-          value-key="code"
         />
       </el-form-item>
     </el-col>
     <el-col :span="span">
       <el-form-item label="货品名称">
         <remote-select
-          v-model="productNameCode"
+          v-model="innerProductNameCode"
           url="/portal/api/Material/allMaterialMaintenance"
           :immediate="false"
           :params="productNameParams"
           @on-select="productNameChange"
-          value-key="code"
         />
       </el-form-item>
     </el-col>
@@ -35,40 +33,75 @@ export default {
       default: 6,
     },
     value: Object,
+    productCategories: [String, Number],
+    productNameCode: [String, Number],
   },
   data() {
     return {
-      productCategories: this.value.productCategories,
-      productNameCode: this.value.productNameCode,
+      innerProductCategories: null,
+      innerProductNameCode: null,
       productNameParams: undefined,
     };
   },
+  watch: {
+    value: {
+      handler(nv) {
+        this.innerProductCategories = nv?.productCategories;
+        this.innerProductNameCode = nv?.productNameCode;
+      },
+      immediate: true,
+    },
+    productCategories: {
+      handler(nv) {
+        this.innerProductCategories = nv;
+      },
+      immediate: true,
+    },
+    productNameCode: {
+      handler(nv) {
+        this.innerProductNameCode = nv;
+      },
+      immediate: true,
+    },
+  },
   mounted() {
-    if (this.value.productCategories) {
+    //有初值的情况。改变params触发调用接口。查询下拉数据
+    const parentId = this.value?.productCategories || this.productCategories;
+    if (parentId) {
       this.productNameParams = {
         materialLevel: 4,
-        parentCode: this.value.productCategories,
+        parentId,
       };
     }
   },
   methods: {
+    //货品类别改变
     categoryChange(data) {
       this.productNameParams = {
         materialLevel: 4,
-        parentCode: data.code,
+        parentId: data.id,
       };
+      //传递完整数据data
       this.$emit("category-selected", data);
+      //支持v-model
       this.$emit("input", {
-        productCategories: this.productCategories,
+        productCategories: this.innerProductCategories,
         productNameCode: undefined,
       });
+      //支持.sync修饰符
+      this.$emit("update:productCategories", this.innerProductCategories);
     },
+    //货品名称改变
     productNameChange(data) {
+      //传递完整数据data
       this.$emit("productName-selected", data);
+      //支持v-model
       this.$emit("input", {
-        productCategories: this.productCategories,
-        productNameCode: this.productNameCode,
+        productCategories: this.innerProductCategories,
+        productNameCode: this.innerProductNameCode,
       });
+      //支持.sync修饰符
+      this.$emit("update:productNameCode", this.innerProductNameCode);
     },
   },
 };

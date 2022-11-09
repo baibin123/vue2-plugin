@@ -2,14 +2,17 @@
   <div>
     <base-list
       url="/portal/api/dryingPlan/findDryingPlan"
+      :params="{ status: 1 }"
       :fields="fields"
       :columns="columns"
-      :params="prod"
     >
       <template #condition>
-        <base-form :form-data="formData" :model="prod" :fields="fields" query>
+        <base-form :form-data="formData" :fields="fields" query>
           <template #goods="{ model }">
-            <goods-select v-model="prod" @input="goodsChange(model)" />
+            <goods-select
+              :productCategories.sync="model.productCategories"
+              :productNameCode.sync="model.productNameCode"
+            />
           </template>
         </base-form>
       </template>
@@ -62,7 +65,10 @@ export default {
           kind: "remote-select",
           label: "计划来源",
         },
-        { prop: "goods" },
+        {
+          prop: "goods",
+          keys: ["productCategories", "productNameCode"],
+        },
       ],
       columns: [
         "planOrderNo",
@@ -82,12 +88,8 @@ export default {
     };
   },
   methods: {
-    goodSelected(params, form) {
-      console.log("params:", params, "form: ", form);
-    },
-    goodsChange(model) {
-      model.productCategories = this.prod.productCategories;
-      model.productNameCode = this.prod.productNameCode;
+    goodChange(value) {
+      console.log("******", value);
     },
   },
   filters: {

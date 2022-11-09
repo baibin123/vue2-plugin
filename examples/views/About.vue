@@ -10,11 +10,5 @@
 import child from "./child";
 export default {
   components: { child },
-  methods: {
-    onClick(data) {
-      console.log("****", data);
-      data.a = 2222;
-    },
-  },
 };
 </script>
