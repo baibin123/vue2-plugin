@@ -1,11 +1,16 @@
 <template>
-  <remote-select v-model="innerValue" v-bind="$attrs" v-on="$listeners" />
+  <remote-select
+    v-model="innerValue"
+    v-bind="$attrs"
+    v-on="$listeners"
+    @change="change"
+  />
 </template>
 
 <script>
 export default {
   name: "form-remote-select",
-  inject: ["formModel", "setFormModel"],
+  inject: ["formModel", "setFormModel", "baseForm"],
   props: {
     value: [String, Number, Array],
   },
@@ -23,6 +28,11 @@ export default {
         if (nv !== ov) this.innerValue = this.value;
       },
       immediate: true,
+    },
+  },
+  methods: {
+    change() {
+      this.baseForm.$emit("on-change", this.$attrs.prop, this.innerValue);
     },
   },
 };

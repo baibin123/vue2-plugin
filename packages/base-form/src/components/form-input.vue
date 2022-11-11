@@ -1,11 +1,16 @@
 <template>
-  <el-input v-model="innerValue" :clearable="clearable" v-bind="$attrs" />
+  <el-input
+    v-model="innerValue"
+    :clearable="clearable"
+    v-bind="$attrs"
+    @change="change"
+  />
 </template>
 
 <script>
 export default {
   name: "form-input",
-  inject: ["formModel", "setFormModel"],
+  inject: ["formModel", "setFormModel", "baseForm"],
   props: {
     clearable: {
       type: Boolean,
@@ -27,6 +32,11 @@ export default {
         if (nv !== ov) this.innerValue = this.value;
       },
       immediate: true,
+    },
+  },
+  methods: {
+    change() {
+      this.baseForm.$emit("on-change", this.$attrs.prop, this.innerValue);
     },
   },
 };

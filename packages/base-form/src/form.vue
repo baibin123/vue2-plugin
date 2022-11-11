@@ -50,6 +50,7 @@ export default {
   },
   provide() {
     return {
+      baseForm: this,
       formModel: this.innerModel,
       setFormModel: (key, val) => {
         this.innerModel[key] = val;
@@ -100,7 +101,6 @@ export default {
   },
   data() {
     return {
-      text: "",
       innerModel: {},
     };
   },

@@ -8,6 +8,7 @@ import BaseInput from "./base-input";
 import RemoteSelect from "./remote-select";
 //业务组件
 import GoodSelect from "./business-components/goods-select/src/GoodsSelect";
+import DictSelect from "./business-components/dict-select/src/DictSelect";
 const components = [
   BaseTable,
   BasePagination,
@@ -17,6 +18,7 @@ const components = [
   BaseInput,
   RemoteSelect,
   GoodSelect,
+  DictSelect,
 ];
 
 const install = function (Vue) {
@@ -39,4 +41,5 @@ export default {
   BaseInput,
   RemoteSelect,
   GoodSelect,
+  DictSelect,
 };

@@ -2,7 +2,8 @@
   <div>
     <base-list
       url="/portal/api/dryingPlan/findDryingPlan"
-      :params="{ status: 1 }"
+      :tabs="tabs"
+      tabParamsKey="status"
       :fields="fields"
       :columns="columns"
     >
@@ -14,6 +15,11 @@
               :productNameCode.sync="model.productNameCode"
             />
           </template>
+          <template #query-other-btn>
+            <el-button type="primary" @click="visible = true">
+              新增计划
+            </el-button>
+          </template>
         </base-form>
       </template>
       <template #planTime="{ row }">
@@ -22,17 +28,21 @@
       <template #status="{ row }">
         <span>{{ row.status | status }}</span>
       </template>
+      <template #action="{ row }">
+        <el-button type="primary" @click="detailClick(row)">详情</el-button>
+      </template>
     </base-list>
+    <add-plan v-model="visible" :data="selectedData" />
   </div>
 </template>
 
 <script>
+import AddPlan from "./AddPlan";
 export default {
   name: "Home",
-  components: {},
+  components: { AddPlan },
   data() {
     return {
-      prod: { productCategories: "1000101", productNameCode: "100010101" },
       fields: {
         planOrderNo: "计划单号",
         createTime: "创建日期",
@@ -69,6 +79,14 @@ export default {
           prop: "goods",
           keys: ["productCategories", "productNameCode"],
         },
+        {
+          prop: "expirationDate",
+          label: "创建日期",
+          kind: "datepicker",
+          type: "daterange",
+          startKey: "createBeginTime",
+          endKey: "createEndTime",
+        },
       ],
       columns: [
         "planOrderNo",
@@ -85,17 +103,26 @@ export default {
         "planTime",
         "status",
       ],
+      tabs: [
+        { label: "待执行", name: 1 },
+        { label: "执行中", name: 2 },
+        { label: "已完成", name: 3 },
+        { label: "已取消", name: 4 },
+      ],
+      visible: false,
+      selectedData: {},
     };
-  },
-  methods: {
-    goodChange(value) {
-      console.log("******", value);
-    },
   },
   filters: {
     status(val) {
       if (val === 1) return "代执行";
       else return "已执行";
+    },
+  },
+  methods: {
+    detailClick(data) {
+      this.selectedData = data;
+      this.visible = true;
     },
   },
 };

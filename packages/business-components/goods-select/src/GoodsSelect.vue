@@ -27,6 +27,12 @@
 <script>
 export default {
   name: "GoodsSelect",
+  inject: {
+    baseForm: {
+      from: "baseForm",
+      default: () => null,
+    },
+  },
   props: {
     span: {
       type: Number,
@@ -90,6 +96,13 @@ export default {
       });
       //支持.sync修饰符
       this.$emit("update:productCategories", this.innerProductCategories);
+      //适配baseForm on-change
+      this.baseForm &&
+        this.baseForm.$emit(
+          "on-change",
+          "productCategories",
+          this.innerProductCategories
+        );
     },
     //货品名称改变
     productNameChange(data) {
@@ -102,6 +115,13 @@ export default {
       });
       //支持.sync修饰符
       this.$emit("update:productNameCode", this.innerProductNameCode);
+      //适配baseForm on-change
+      this.baseForm &&
+        this.baseForm.$emit(
+          "on-change",
+          "productNameCode",
+          this.innerProductNameCode
+        );
     },
   },
 };

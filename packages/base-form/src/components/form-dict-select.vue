@@ -1,34 +1,18 @@
 <template>
-  <el-select
+  <dict-select
     v-model="innerValue"
-    :clearable="clearable"
     v-bind="$attrs"
-    style="width: 100%"
+    v-on="$listeners"
     @change="change"
-  >
-    <el-option
-      v-for="opt of options"
-      :key="opt.value"
-      :value="opt.value"
-      :label="opt.label"
-    />
-  </el-select>
+  />
 </template>
 
 <script>
 export default {
-  name: "form-select",
+  name: "form-dict-select",
   inject: ["formModel", "setFormModel", "baseForm"],
   props: {
-    clearable: {
-      type: Boolean,
-      default: true,
-    },
-    options: {
-      type: Array,
-      default: () => [],
-    },
-    value: [String, Number],
+    value: [String, Number, Array],
   },
   data() {
     return {
@@ -40,7 +24,7 @@ export default {
       if (nv !== ov) this.setFormModel(this.$attrs.prop, nv);
     },
     value: {
-      handler: function (nv, ov) {
+      handler(nv, ov) {
         if (nv !== ov) this.innerValue = this.value;
       },
       immediate: true,

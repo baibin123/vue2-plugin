@@ -1,5 +1,6 @@
 <template>
   <el-table :data="tableData" border stripe v-bind="$attrs" v-on="$listeners">
+    <!-- 业务数据列   -->
     <template v-for="col of innerColumns">
       <el-table-column
         v-if="!$scopedSlots[col.prop]"
@@ -18,6 +19,13 @@
         </template>
       </el-table-column>
     </template>
+    <!--  操作列    -->
+    <el-table-column v-if="$scopedSlots.action" fixed="right" label="操作">
+      <template slot-scope="scope">
+        <slot name="action" v-bind="scope" />
+      </template>
+    </el-table-column>
+    <!--  原生element table 支持  注意：不与上面同时支持  -->
     <template #[slotName] v-for="(_, slotName) in $slots">
       <slot
         :name="slotName"
