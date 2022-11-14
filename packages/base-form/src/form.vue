@@ -8,7 +8,7 @@
     class="common-form"
   >
     <el-row :gutter="20">
-      <template v-for="item of formData">
+      <template v-for="item of formConfig">
         <span v-if="$scopedSlots[item.prop]" :key="item.prop">
           <slot :name="item.prop" :model="innerModel" />
         </span>
@@ -69,7 +69,7 @@ export default {
       type: Object,
       default: () => {},
     },
-    formData: {
+    formConfig: {
       type: Array,
       required: true,
       default: () => [],
@@ -106,7 +106,7 @@ export default {
   },
   created() {
     if (!this.model) {
-      this.innerModel = this.formData.reduce((obj, item) => {
+      this.innerModel = this.formConfig.reduce((obj, item) => {
         if (item.keys?.length > 0) {
           const keyObj = item.keys.reduce((sub, key) => {
             return { ...sub, [key]: undefined };

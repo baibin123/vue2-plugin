@@ -3,7 +3,7 @@
     v-model="innerValue"
     v-bind="$attrs"
     v-on="$listeners"
-    @change="change"
+    @on-select="change"
   />
 </template>
 
@@ -31,8 +31,8 @@ export default {
     },
   },
   methods: {
-    change() {
-      this.baseForm.$emit("on-change", this.$attrs.prop, this.innerValue);
+    change(data) {
+      this.baseForm.$emit("on-change", this.$attrs.prop, data);
     },
   },
 };

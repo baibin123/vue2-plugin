@@ -1,8 +1,9 @@
 <template>
-  <div>
+  <span>
     <el-col :span="span">
       <el-form-item label="货品类别">
         <remote-select
+          :disabled="disabled"
           v-model="innerProductCategories"
           url="/portal/api/Material/allMaterialMaintenance"
           :params="{ materialLevel: 3 }"
@@ -14,6 +15,7 @@
       <el-form-item label="货品名称">
         <remote-select
           v-model="innerProductNameCode"
+          :disabled="disabled"
           url="/portal/api/Material/allMaterialMaintenance"
           :immediate="false"
           :params="productNameParams"
@@ -21,7 +23,7 @@
         />
       </el-form-item>
     </el-col>
-  </div>
+  </span>
 </template>
 
 <script>
@@ -41,6 +43,7 @@ export default {
     value: Object,
     productCategories: [String, Number],
     productNameCode: [String, Number],
+    disabled: Boolean,
   },
   data() {
     return {

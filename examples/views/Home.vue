@@ -8,7 +8,7 @@
       :columns="columns"
     >
       <template #condition>
-        <base-form :form-data="formData" :fields="fields" query>
+        <base-form :form-config="formConfig" :fields="fields" query>
           <template #goods="{ model }">
             <goods-select
               :productCategories.sync="model.productCategories"
@@ -16,7 +16,7 @@
             />
           </template>
           <template #query-other-btn>
-            <el-button type="primary" @click="visible = true">
+            <el-button type="primary" @click="detailClick({})">
               新增计划
             </el-button>
           </template>
@@ -32,7 +32,14 @@
         <el-button type="primary" @click="detailClick(row)">详情</el-button>
       </template>
     </base-list>
-    <add-plan v-model="visible" :data="selectedData" />
+    <el-drawer
+      title="新建计划"
+      :visible.sync="visible"
+      size="80%"
+      destroy-on-close
+    >
+      <add-plan :visible.sync="visible" :data="selectedData" />
+    </el-drawer>
   </div>
 </template>
 
@@ -58,7 +65,7 @@ export default {
         planTime: "计划时限",
         status: "状态",
       },
-      formData: [
+      formConfig: [
         { prop: "planOrderNo", kind: "input" },
         {
           prop: "executionCompanyCode",

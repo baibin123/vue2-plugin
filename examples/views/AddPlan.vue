@@ -1,33 +1,45 @@
 <template>
-  <el-drawer title="新建计划" :visible="value" @close="close" size="80%">
-    <base-form
-      :form-data="formData"
-      :model="formModel"
-      :form-span="12"
-      :btn-span="24"
-      style="padding: 0 20px"
-    >
-      <template #customer-btns>
-        <el-button @close="close">取消</el-button>
-        <el-button type="primary">保存</el-button>
-      </template>
-    </base-form>
-  </el-drawer>
+  <base-form
+    :form-config="formConfig"
+    :model="formModel"
+    :form-span="12"
+    :btn-span="24"
+    style="padding: 0 20px"
+    @on-change="changeForm"
+  >
+    <template #goods="{ model }">
+      <goods-select
+        disabled
+        :span="12"
+        :productCategories.sync="model.productCategories"
+        :productNameCode.sync="model.productNameCode"
+      />
+    </template>
+    <template #customer-btns>
+      <el-button @click="close">取消</el-button>
+      <el-button type="primary">保存</el-button>
+    </template>
+  </base-form>
 </template>
 
 <script>
 export default {
   name: "AddPlan",
   props: {
-    value: Boolean,
     data: Object,
+    visible: Boolean,
   },
   data() {
     return {
-      formData: [
+      formConfig: [
         { prop: "planOrderNo", label: "计划单号", kind: "input" },
-        { prop: "createTime", label: "创建日期", kind: "input" },
-        { prop: "creator", label: "创建人", kind: "input" },
+        {
+          prop: "createTime",
+          label: "创建日期",
+          kind: "input",
+          disabled: true,
+        },
+        { prop: "creator", label: "创建人", kind: "input", disabled: true },
         {
           prop: "executionCompanyCode",
           url: "/portal/api/common/selectXyCompanyList",
@@ -44,35 +56,29 @@ export default {
         },
         {
           prop: "siteCode",
-          url: "/portal/api/business/nature/getBusinessNatureList",
-          immediate: false,
+          url: "/portal/api/common/selectXyCompanyList",
+          params: { level: 2 },
           kind: "remote-select",
           label: "库点",
         },
         {
           prop: "materialId",
           url: "/portal/api/Material/allMaterialInfo",
-          immediate: false,
           kind: "remote-select",
+          labelKey: "materialDesc",
           label: "关联物料主数据",
         },
         {
-          prop: "productAttrLabel",
+          prop: "goodsAttribute",
           label: "货品属性",
-          kind: "input",
+          url: "/portal/api/Material/allMaterialPropInfo",
+          kind: "remote-select",
+          labelKey: "propName",
           disabled: true,
         },
         {
-          prop: "productCategoriesLabel",
-          label: "货品类别",
-          kind: "input",
-          disabled: true,
-        },
-        {
-          prop: "productNameLabel",
-          label: "货品名称",
-          kind: "input",
-          disabled: true,
+          prop: "goods",
+          keys: ["productCategories", "productNameCode"],
         },
         {
           prop: "planTotalQuantity",
@@ -104,13 +110,52 @@ export default {
           startKey: "createBeginTime",
           endKey: "createEndTime",
         },
+        {
+          prop: "remark",
+          label: "备注",
+          kind: "input",
+        },
       ],
-      formModel: this.data,
+      formModel: {},
     };
   },
+  created() {
+    if (this.data?.planOrderNo) {
+      this.formModel = this.data;
+      if (this.data?.executionCompanyCode) {
+        this.getFormItem("siteCode").params = {
+          level: 2,
+          ids: [this.data?.executionCompanyCode],
+        };
+        this.getFormItem("materialId").params = {
+          companyIds: [this.data?.executionCompanyCode],
+        };
+      }
+    } else {
+      this.formConfig = this.formConfig.filter(
+        (item) => item.prop !== "createTime" && item.prop !== "creator"
+      );
+      this.getFormItem("siteCode").immediate = false;
+      this.getFormItem("materialId").immediate = false;
+    }
+  },
   methods: {
+    getFormItem(prop) {
+      return this.formConfig.find((item) => item.prop === prop);
+    },
+    changeForm(key, data) {
+      if (key === "executionCompanyCode" && data) {
+        this.getFormItem("siteCode").params = { level: 2, ids: [data.id] };
+        this.getFormItem("materialId").params = { companyIds: [data.id] };
+      } else if (key === "materialId") {
+        this.formModel.goodsAttribute = data.propId;
+        this.formModel.productNameCode = data.nameId;
+        this.formModel.productCategories = data.typeId;
+        this.$forceUpdate()
+      }
+    },
     close() {
-      this.$emit("input", false);
+      this.$emit("update:visible", false);
     },
   },
 };

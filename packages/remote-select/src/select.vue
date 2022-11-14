@@ -71,6 +71,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    isCompare: {
+      type: Boolean,
+      default: true,
+    },
   },
   model: {
     prop: "value",
@@ -91,7 +95,7 @@ export default {
       immediate: true,
     },
     params: function (nv, ov) {
-      if (!common.isEqual(nv, ov)) {
+      if (!this.isCompare || !common.isEqual(nv, ov)) {
         this.remoteMethod();
       }
     },
