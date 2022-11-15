@@ -11,6 +11,7 @@
     style="width: 100%"
     :clearable="clearable"
     v-bind="$attrs"
+    v-on="$listeners"
   >
     <el-option
       v-for="item in options"

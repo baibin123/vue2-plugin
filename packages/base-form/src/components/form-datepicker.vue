@@ -8,7 +8,9 @@
     :range-separator="rangeSeparator"
     :value-format="valueFormat"
     v-bind="$attrs"
+    v-on="$listeners"
     @change="change"
+    @focus="focus"
   />
 </template>
 
@@ -21,7 +23,7 @@ export default {
       type: Boolean,
       default: true,
     },
-    value: [String, Date],
+    value: [String, Date, Array],
     placeholder: {
       type: String,
       default: "请选择时间",
@@ -64,6 +66,9 @@ export default {
   methods: {
     change() {
       this.baseForm.$emit("on-change", this.$attrs.prop, this.innerValue);
+    },
+    focus() {
+      this.baseForm.$emit("on-focus", this.$attrs.prop, this.innerValue);
     },
   },
 };

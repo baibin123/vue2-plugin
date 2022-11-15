@@ -57,12 +57,24 @@ export default {
       handler(nv) {
         this.innerProductCategories = nv?.productCategories;
         this.innerProductNameCode = nv?.productNameCode;
+        if (nv?.productCategories) {
+          this.productNameParams = {
+            materialLevel: 4,
+            parentId: nv?.productCategories,
+          };
+        }
       },
       immediate: true,
     },
     productCategories: {
       handler(nv) {
         this.innerProductCategories = nv;
+        if (nv) {
+          this.productNameParams = {
+            materialLevel: 4,
+            parentId: nv,
+          };
+        }
       },
       immediate: true,
     },
@@ -74,14 +86,14 @@ export default {
     },
   },
   mounted() {
-    //有初值的情况。改变params触发调用接口。查询下拉数据
-    const parentId = this.value?.productCategories || this.productCategories;
-    if (parentId) {
-      this.productNameParams = {
-        materialLevel: 4,
-        parentId,
-      };
-    }
+    // //有初值的情况。改变params触发调用接口。查询下拉数据
+    // const parentId = this.value?.productCategories || this.productCategories;
+    // if (parentId) {
+    //   this.productNameParams = {
+    //     materialLevel: 4,
+    //     parentId,
+    //   };
+    // }
   },
   methods: {
     //货品类别改变

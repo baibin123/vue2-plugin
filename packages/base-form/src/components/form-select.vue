@@ -3,8 +3,10 @@
     v-model="innerValue"
     :clearable="clearable"
     v-bind="$attrs"
+    v-on="$listeners"
     style="width: 100%"
     @change="change"
+    @focus="focus"
   >
     <el-option
       v-for="opt of options"
@@ -49,6 +51,9 @@ export default {
   methods: {
     change() {
       this.baseForm.$emit("on-change", this.$attrs.prop, this.innerValue);
+    },
+    focus() {
+      this.baseForm.$emit("on-focus", this.$attrs.prop, this.innerValue);
     },
   },
 };

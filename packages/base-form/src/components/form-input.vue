@@ -3,7 +3,9 @@
     v-model="innerValue"
     :clearable="clearable"
     v-bind="$attrs"
+    v-on="$listeners"
     @change="change"
+    @focus="focus"
   />
 </template>
 
@@ -37,6 +39,9 @@ export default {
   methods: {
     change() {
       this.baseForm.$emit("on-change", this.$attrs.prop, this.innerValue);
+    },
+    focus() {
+      this.baseForm.$emit("on-focus", this.$attrs.prop, this.innerValue);
     },
   },
 };

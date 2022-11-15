@@ -4,6 +4,7 @@
     v-bind="$attrs"
     v-on="$listeners"
     @on-select="change"
+    @focus="focus"
   />
 </template>
 
@@ -33,6 +34,9 @@ export default {
   methods: {
     change(data) {
       this.baseForm.$emit("on-change", this.$attrs.prop, data);
+    },
+    focus() {
+      this.baseForm.$emit("on-focus", this.$attrs.prop, this.innerValue);
     },
   },
 };

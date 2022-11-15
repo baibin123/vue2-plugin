@@ -92,6 +92,19 @@ export default {
     model: {
       handler: function (nv) {
         if (nv) {
+          //处理 datepick 数组 赋值问题
+          this.formConfig.forEach((conf) => {
+            const { type, startKey, endKey, prop } = conf;
+            if (
+              type === "daterange" &&
+              startKey &&
+              endKey &&
+              nv?.[startKey] &&
+              nv?.[startKey]
+            ) {
+              nv[prop] = [nv?.[startKey], nv?.[startKey]];
+            }
+          });
           this.innerModel = nv;
         }
       },
@@ -113,7 +126,7 @@ export default {
           }, {});
           return { ...obj, ...keyObj };
         } else {
-          return { ...obj, [item.prop]: item.value };
+          return { ...obj, [item.prop]: undefined };
         }
       }, {});
     }

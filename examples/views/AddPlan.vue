@@ -6,6 +6,7 @@
     :btn-span="24"
     style="padding: 0 20px"
     @on-change="changeForm"
+    @on-focus="focusForm"
   >
     <template #goods="{ model }">
       <goods-select
@@ -17,12 +18,14 @@
     </template>
     <template #customer-btns>
       <el-button @click="close">取消</el-button>
-      <el-button type="primary">保存</el-button>
+      <el-button type="primary" @click="saveClick">保存</el-button>
     </template>
   </base-form>
 </template>
 
 <script>
+import { POST } from "../../packages/http";
+
 export default {
   name: "AddPlan",
   props: {
@@ -107,8 +110,8 @@ export default {
           label: "计划日期日期",
           kind: "datepicker",
           type: "daterange",
-          startKey: "createBeginTime",
-          endKey: "createEndTime",
+          startKey: "planStartDate",
+          endKey: "planEndDate",
         },
         {
           prop: "remark",
@@ -122,37 +125,56 @@ export default {
   created() {
     if (this.data?.planOrderNo) {
       this.formModel = this.data;
-      if (this.data?.executionCompanyCode) {
-        this.getFormItem("siteCode").params = {
+      const { executionCompanyCode } = this.data;
+      if (executionCompanyCode) {
+        this.formConfig.$get("siteCode").params = {
           level: 2,
-          ids: [this.data?.executionCompanyCode],
+          ids: [executionCompanyCode],
         };
-        this.getFormItem("materialId").params = {
-          companyIds: [this.data?.executionCompanyCode],
+        this.formConfig.$get("materialId").params = {
+          companyIds: [executionCompanyCode],
         };
       }
     } else {
       this.formConfig = this.formConfig.filter(
-        (item) => item.prop !== "createTime" && item.prop !== "creator"
+        (item) =>
+          item.prop !== "createTime" &&
+          item.prop !== "creator" &&
+          item.prop !== "planOrderNo"
       );
-      this.getFormItem("siteCode").immediate = false;
-      this.getFormItem("materialId").immediate = false;
+      this.formConfig.$get("siteCode").immediate = false;
+      this.formConfig.$get("materialId").immediate = false;
     }
   },
   methods: {
-    getFormItem(prop) {
-      return this.formConfig.find((item) => item.prop === prop);
-    },
     changeForm(key, data) {
       if (key === "executionCompanyCode" && data) {
-        this.getFormItem("siteCode").params = { level: 2, ids: [data.id] };
-        this.getFormItem("materialId").params = { companyIds: [data.id] };
+        this.formConfig.$get("siteCode").params = { level: 2, ids: [data.id] };
+        this.formConfig.$get("materialId").params = { companyIds: [data.id] };
       } else if (key === "materialId") {
         this.formModel.goodsAttribute = data.propId;
         this.formModel.productNameCode = data.nameId;
         this.formModel.productCategories = data.typeId;
-        this.$forceUpdate()
+        this.$forceUpdate();
       }
+    },
+    focusForm(key) {
+      if (
+        ["siteCode", "materialId"].includes(key) &&
+        !this.formModel.executionCompanyCode
+      ) {
+        this.$message({ type: "error", message: "请先选择执行单位" });
+      }
+    },
+    saveClick() {
+      const params = {
+        ...this.formModel,
+        planTotalQuantity: this.formModel.planTotalQuantity * 1000,
+      };
+      POST("/portal/api/dryingPlan/addDryingPlan", params).then(() => {
+        this.$message({ type: "success", message: "新增成功" });
+        this.close();
+      });
     },
     close() {
       this.$emit("update:visible", false);

@@ -1,3 +1,5 @@
+//数组原型
+import "./util/array.prototype";
 //公用组件
 import BaseTable from "./base-table";
 import BasePagination from "./base-pagination";
