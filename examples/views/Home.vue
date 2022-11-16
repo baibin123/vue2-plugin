@@ -1,6 +1,7 @@
 <template>
   <div>
     <base-list
+      ref="list"
       url="/portal/api/dryingPlan/findDryingPlan"
       :tabs="tabs"
       tabParamsKey="status"
@@ -38,7 +39,11 @@
       size="80%"
       destroy-on-close
     >
-      <add-plan :visible.sync="visible" :data="selectedData" />
+      <add-plan
+        :visible.sync="visible"
+        :data="selectedData"
+        @success="success"
+      />
     </el-drawer>
   </div>
 </template>
@@ -130,6 +135,9 @@ export default {
     detailClick(data) {
       this.selectedData = data;
       this.visible = true;
+    },
+    success() {
+      this.$refs.list.refresh();
     },
   },
 };

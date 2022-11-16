@@ -1,5 +1,6 @@
 <template>
   <base-form
+    ref="baseForm"
     :form-config="formConfig"
     :model="formModel"
     :form-span="12"
@@ -167,14 +168,24 @@ export default {
       }
     },
     saveClick() {
-      const params = {
-        ...this.formModel,
-        planTotalQuantity: this.formModel.planTotalQuantity * 1000,
-      };
-      POST("/portal/api/dryingPlan/addDryingPlan", params).then(() => {
-        this.$message({ type: "success", message: "新增成功" });
-        this.close();
-      });
+      if (this.data.planOrderNo) {
+        const params = this.$refs.baseForm.getModal();
+        POST("/portal/api/dryingPlan/editDryingPlan", params).then(() => {
+          this.$message({ type: "success", message: "修改成功" });
+          this.$emit("success", false);
+          this.close();
+        });
+      } else {
+        //新增
+        const params = {
+          ...this.formModel,
+          planTotalQuantity: this.formModel.planTotalQuantity * 1000,
+        };
+        POST("/portal/api/dryingPlan/addDryingPlan", params).then(() => {
+          this.$message({ type: "success", message: "新增成功" });
+          this.close();
+        });
+      }
     },
     close() {
       this.$emit("update:visible", false);

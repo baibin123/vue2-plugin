@@ -29,7 +29,7 @@
 
 <script>
 import { POST } from "../../http";
-import common from "../../util/common";
+import { isEqual } from "../../util/common";
 
 export default {
   name: "RemoteSelect",
@@ -96,7 +96,7 @@ export default {
       immediate: true,
     },
     params: function (nv, ov) {
-      if (!this.isCompare || !common.isEqual(nv, ov)) {
+      if (!this.isCompare || !isEqual(nv, ov)) {
         this.remoteMethod();
       }
     },

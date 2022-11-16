@@ -40,6 +40,8 @@
 
 <script>
 import FormItem from "./form-item";
+import { cloneDeep } from "../../util/common";
+
 export default {
   name: "BaseForm",
   inject: {
@@ -92,20 +94,7 @@ export default {
     model: {
       handler: function (nv) {
         if (nv) {
-          //处理 datepick 数组 赋值问题
-          this.formConfig.forEach((conf) => {
-            const { type, startKey, endKey, prop } = conf;
-            if (
-              type === "daterange" &&
-              startKey &&
-              endKey &&
-              nv?.[startKey] &&
-              nv?.[startKey]
-            ) {
-              nv[prop] = [nv?.[startKey], nv?.[startKey]];
-            }
-          });
-          this.innerModel = nv;
+          this.innerModel = this.resetModal(nv);
         }
       },
       immediate: true,
@@ -132,22 +121,50 @@ export default {
     }
   },
   methods: {
+    resetModal(modal) {
+      //增加 datepick 数组 赋值问题
+      let copyModal = cloneDeep(modal);
+      this.formConfig.forEach((conf) => {
+        const { type, startKey, endKey, prop } = conf;
+        if (
+          type === "daterange" &&
+          startKey &&
+          endKey &&
+          copyModal?.[startKey] &&
+          copyModal?.[startKey]
+        ) {
+          copyModal[prop] = [copyModal?.[startKey], copyModal?.[startKey]];
+        }
+      });
+      return copyModal;
+    },
     onReset() {
       Object.keys(this.innerModel).forEach(
         (key) => (this.innerModel[key] = undefined)
       );
       this.$emit("on-search", this.innerModel);
-      this.baseList.onSearch && this.baseList.onSearch(this.innerModel);
+      this.baseList.onSearch && this.baseList.onSearch(this.getModal());
     },
     onQuery() {
-      this.$emit("on-search", this.innerModel);
-      this.baseList.onSearch && this.baseList.onSearch(this.innerModel);
+      this.$emit("on-search", this.getModal());
+      this.baseList.onSearch && this.baseList.onSearch(this.getModal());
     },
     onCancel() {
       this.$emit("on-cancel");
     },
+    getModal() {
+      const modal = cloneDeep(this.innerModel);
+      this.formConfig.forEach((conf) => {
+        const { type, startKey, endKey, prop } = conf;
+        //删除 datepick 数组
+        if (type === "daterange" && startKey && endKey && modal?.[prop]) {
+          delete modal[prop];
+        }
+      });
+      return modal;
+    },
     onSave() {
-      this.$emit("on-save", this.innerModel);
+      this.$emit("on-save", this.getModal());
     },
   },
 };

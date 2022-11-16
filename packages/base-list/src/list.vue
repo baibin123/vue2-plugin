@@ -37,7 +37,7 @@
         <slot :name="slotName" v-bind="scope" />
       </template>
     </base-table>
-    <base-pagination :page="page" :total="total" @change="searchData" />
+    <base-pagination :page="page" :total="total" @change="_searchData" />
   </div>
 </template>
 
@@ -86,19 +86,22 @@ export default {
     },
   },
   created() {
-    this.searchData();
+    this._searchData();
   },
   methods: {
     tabClick() {
       this.page = { pageSize: 10, pageNum: 1 };
-      this.searchData();
+      this._searchData();
     },
     onSearch(params) {
       this.page = { pageSize: 10, pageNum: 1 };
       this.searchParams = params;
-      this.searchData();
+      this._searchData();
     },
-    searchData() {
+    refresh(){
+      this._searchData()
+    },
+    _searchData() {
       let params = {
         ...this.params,
         ...this.searchParams,

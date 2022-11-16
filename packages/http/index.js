@@ -1,6 +1,6 @@
-import common from "../util/common";
+import { getStoreData } from "../util/common";
 import { Message } from "element-ui";
-const token = common.getStoreData("token");
+const token = getStoreData("token");
 const baseUrl = "https://t-waasapi.xydti.com";
 export const POST = (url, params, showErr = true) => {
   return new Promise((resolve, reject) => {
