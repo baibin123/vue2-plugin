@@ -11,7 +11,11 @@
     v-on="$listeners"
     @change="change"
     @focus="focus"
-  />
+  >
+    <template #[slotName] v-for="(_, slotName) in $slots">
+      <slot :name="slotName" />
+    </template>
+  </el-date-picker>
 </template>
 
 <script>
@@ -57,8 +61,22 @@ export default {
       }
     },
     value: {
-      handler(nv, ov) {
-        if (nv !== ov) this.innerValue = this.value;
+      handler() {
+        if (this.$attrs.type === "daterange") {
+          if (
+            this.formModel?.[this.startKey] &&
+            this.formModel?.[this.endKey]
+          ) {
+            this.innerValue = [
+              this.formModel[this.startKey],
+              this.formModel[this.endKey],
+            ];
+          } else {
+            this.innerValue = [];
+          }
+        } else {
+          this.innerValue = this.value;
+        }
       },
       immediate: true,
     },

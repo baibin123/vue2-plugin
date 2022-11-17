@@ -7,7 +7,7 @@
     align="bottom"
     class="common-form"
   >
-    <el-row :gutter="20">
+    <el-row :gutter="20" v-if="formConfig.length > 0">
       <template v-for="item of formConfig">
         <span v-if="$scopedSlots[item.prop]" :key="item.prop">
           <slot :name="item.prop" :model="innerModel" />
@@ -21,8 +21,8 @@
         </el-col>
       </template>
       <el-col :span="btnSpan" v-if="showBtn">
-        <el-form-item v-if="$scopedSlots['customer-btns']">
-          <slot name="customer-btns"></slot>
+        <el-form-item v-if="$scopedSlots['actions']">
+          <slot name="actions"></slot>
         </el-form-item>
         <el-form-item v-else-if="query" label="操作" class="form-btn-container">
           <el-button type="primary" @click="onQuery">查询</el-button>
@@ -35,12 +35,12 @@
         </el-form-item>
       </el-col>
     </el-row>
+    <slot v-else />
   </el-form>
 </template>
 
 <script>
 import FormItem from "./form-item";
-import { cloneDeep } from "../../util/common";
 
 export default {
   name: "BaseForm",
@@ -73,7 +73,6 @@ export default {
     },
     formConfig: {
       type: Array,
-      required: true,
       default: () => [],
     },
     formSpan: {
@@ -93,9 +92,7 @@ export default {
   watch: {
     model: {
       handler: function (nv) {
-        if (nv) {
-          this.innerModel = this.resetModal(nv);
-        }
+        this.innerModel = nv;
       },
       immediate: true,
       deep: true,
@@ -121,50 +118,22 @@ export default {
     }
   },
   methods: {
-    resetModal(modal) {
-      //增加 datepick 数组 赋值问题
-      let copyModal = cloneDeep(modal);
-      this.formConfig.forEach((conf) => {
-        const { type, startKey, endKey, prop } = conf;
-        if (
-          type === "daterange" &&
-          startKey &&
-          endKey &&
-          copyModal?.[startKey] &&
-          copyModal?.[startKey]
-        ) {
-          copyModal[prop] = [copyModal?.[startKey], copyModal?.[startKey]];
-        }
-      });
-      return copyModal;
-    },
     onReset() {
       Object.keys(this.innerModel).forEach(
         (key) => (this.innerModel[key] = undefined)
       );
       this.$emit("on-search", this.innerModel);
-      this.baseList.onSearch && this.baseList.onSearch(this.getModal());
+      this.baseList.onSearch && this.baseList.onSearch(this.innerModel);
     },
     onQuery() {
-      this.$emit("on-search", this.getModal());
-      this.baseList.onSearch && this.baseList.onSearch(this.getModal());
+      this.$emit("on-search", this.innerModel);
+      this.baseList.onSearch && this.baseList.onSearch(this.innerModel);
     },
     onCancel() {
       this.$emit("on-cancel");
     },
-    getModal() {
-      const modal = cloneDeep(this.innerModel);
-      this.formConfig.forEach((conf) => {
-        const { type, startKey, endKey, prop } = conf;
-        //删除 datepick 数组
-        if (type === "daterange" && startKey && endKey && modal?.[prop]) {
-          delete modal[prop];
-        }
-      });
-      return modal;
-    },
     onSave() {
-      this.$emit("on-save", this.getModal());
+      this.$emit("on-save", this.innerModel);
     },
   },
 };

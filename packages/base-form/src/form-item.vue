@@ -5,7 +5,11 @@
       :prop="prop"
       v-bind="$attrs"
       v-on="$listeners"
-    />
+    >
+      <template #[slotName] v-for="(_, slotName) in $slots">
+        <slot :name="slotName" />
+      </template>
+    </component>
   </el-form-item>
 </template>
 
@@ -13,7 +17,7 @@
 import * as formComponents from "./components";
 
 export default {
-  name: "form-item",
+  name: "BaseFormItem",
   components: {
     ...formComponents,
   },

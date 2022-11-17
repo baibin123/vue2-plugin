@@ -17,7 +17,7 @@
         :productNameCode.sync="model.productNameCode"
       />
     </template>
-    <template #customer-btns>
+    <template #actions>
       <el-button @click="close">取消</el-button>
       <el-button type="primary" @click="saveClick">保存</el-button>
     </template>
@@ -169,12 +169,13 @@ export default {
     },
     saveClick() {
       if (this.data.planOrderNo) {
-        const params = this.$refs.baseForm.getModal();
-        POST("/portal/api/dryingPlan/editDryingPlan", params).then(() => {
-          this.$message({ type: "success", message: "修改成功" });
-          this.$emit("success", false);
-          this.close();
-        });
+        POST("/portal/api/dryingPlan/editDryingPlan", this.formModel).then(
+          () => {
+            this.$message({ type: "success", message: "修改成功" });
+            this.$emit("success", false);
+            this.close();
+          }
+        );
       } else {
         //新增
         const params = {

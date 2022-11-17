@@ -137,7 +137,7 @@ export default {
       this.visible = true;
     },
     success() {
-      this.$refs.list.refresh();
+      this.$refs.list.reload();
     },
   },
 };

@@ -8,6 +8,9 @@
     @change="change"
     @focus="focus"
   >
+    <template #[slotName] v-for="(_, slotName) in $slots">
+      <slot :name="slotName" />
+    </template>
     <el-option
       v-for="opt of options"
       :key="opt.value"

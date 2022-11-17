@@ -16,8 +16,8 @@
         <remote-select
           v-model="innerProductNameCode"
           :disabled="disabled"
+          :immediate="productCategories != null"
           url="/portal/api/Material/allMaterialMaintenance"
-          :immediate="false"
           :params="productNameParams"
           @on-select="productNameChange"
         />
@@ -78,22 +78,15 @@ export default {
       },
       immediate: true,
     },
+    productNameParams(nv, ov) {
+      console.log("*****", nv, "***", ov);
+    },
     productNameCode: {
       handler(nv) {
         this.innerProductNameCode = nv;
       },
       immediate: true,
     },
-  },
-  mounted() {
-    // //有初值的情况。改变params触发调用接口。查询下拉数据
-    // const parentId = this.value?.productCategories || this.productCategories;
-    // if (parentId) {
-    //   this.productNameParams = {
-    //     materialLevel: 4,
-    //     parentId,
-    //   };
-    // }
   },
   methods: {
     //货品类别改变

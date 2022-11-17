@@ -37,7 +37,12 @@
         <slot :name="slotName" v-bind="scope" />
       </template>
     </base-table>
-    <base-pagination :page="page" :total="total" @change="_searchData" />
+    <base-pagination
+      v-if="showPaging"
+      :page="page"
+      :total="total"
+      @change="_searchData"
+    />
   </div>
 </template>
 
@@ -50,6 +55,10 @@ export default {
       type: String,
       required: true,
     },
+    pageSize: {
+      type: Number,
+      default: 10,
+    },
     tabs: {
       type: Array,
       default: () => [],
@@ -58,6 +67,18 @@ export default {
     params: {
       type: Object,
       default: () => ({}),
+    },
+    showPaging: {
+      type: Boolean,
+      default: true,
+    },
+    primaryKey: {
+      type: String,
+      default: "records",
+    },
+    immediate: {
+      type: Boolean,
+      default: true,
     },
   },
   provide() {
@@ -68,7 +89,7 @@ export default {
   data() {
     return {
       page: {
-        pageSize: 10,
+        pageSize: this.pageSize,
         pageNum: 1,
       },
       total: 0,
@@ -86,20 +107,20 @@ export default {
     },
   },
   created() {
-    this._searchData();
+    this.immediate && this._searchData();
   },
   methods: {
     tabClick() {
-      this.page = { pageSize: 10, pageNum: 1 };
+      this.page = { pageSize: this.pageSize, pageNum: 1 };
       this._searchData();
     },
     onSearch(params) {
-      this.page = { pageSize: 10, pageNum: 1 };
+      this.page = { pageSize: this.pageSize, pageNum: 1 };
       this.searchParams = params;
       this._searchData();
     },
-    refresh(){
-      this._searchData()
+    reload() {
+      this._searchData();
     },
     _searchData() {
       let params = {
@@ -107,12 +128,17 @@ export default {
         ...this.searchParams,
         ...this.page,
       };
+      if (!this.showPaging) {
+        delete params.pageSize;
+        delete params.pageNum;
+      }
       if (this.tabParamsKey) params[this.tabParamsKey] = this.tabActive;
       this.tableLoading = true;
       POST(this.url, params)
         .then(({ data }) => {
-          this.tableData = data.records;
-          this.total = data.total;
+          this.tableData = data[this.primaryKey];
+          this.total = data?.total;
+          this.$emit("on-finish", this.tableData);
         })
         .finally(() => {
           this.tableLoading = false;

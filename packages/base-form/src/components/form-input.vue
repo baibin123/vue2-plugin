@@ -6,7 +6,11 @@
     v-on="$listeners"
     @change="change"
     @focus="focus"
-  />
+  >
+    <template #[slotName] v-for="(_, slotName) in $slots">
+      <slot :name="slotName" />
+    </template>
+  </el-input>
 </template>
 
 <script>
