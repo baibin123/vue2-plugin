@@ -2,7 +2,7 @@ import { getStoreData } from "../util/common";
 import { Message } from "element-ui";
 const token = getStoreData("token");
 const baseUrl = "https://t-waasapi.xydti.com";
-export const POST = (url, params, showErr = true) => {
+const POST = (url, params, showErr = true) => {
   return new Promise((resolve, reject) => {
     fetch(baseUrl + url, {
       method: "post",
@@ -27,4 +27,8 @@ export const POST = (url, params, showErr = true) => {
         reject(err);
       });
   });
+};
+
+export default {
+  POST,
 };

@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { POST } from "../../../http";
+import http from "../../../http";
 export default {
   name: "DictSelect",
   props: {
@@ -40,7 +40,7 @@ export default {
         dictKey: this.code,
         page: { pageNo: 1, pageSize: 10 },
       };
-      POST("/masterdata/api/dict/pageQuery", params).then(({ data }) => {
+      http.POST("/masterdata/api/dict/pageQuery", params).then(({ data }) => {
         if (data.list.length > 0) {
           this.options = JSON.parse(data.list[0].dictValue);
         }

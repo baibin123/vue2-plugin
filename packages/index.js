@@ -8,6 +8,9 @@ import BaseList from "./base-list";
 import BaseSelect from "./base-select";
 import BaseInput from "./base-input";
 import RemoteSelect from "./remote-select";
+import BaseDrawer from "./base-drawer";
+import BaseExecute from "./base-execute";
+
 //业务组件
 import GoodSelect from "./business-components/goods-select/src/GoodsSelect";
 import DictSelect from "./business-components/dict-select/src/DictSelect";
@@ -21,6 +24,8 @@ const components = [
   RemoteSelect,
   GoodSelect,
   DictSelect,
+  BaseDrawer,
+  BaseExecute,
 ];
 
 const install = function (Vue) {
@@ -44,4 +49,6 @@ export default {
   RemoteSelect,
   GoodSelect,
   DictSelect,
+  BaseDrawer,
+  BaseExecute,
 };

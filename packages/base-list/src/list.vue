@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { POST } from "../../http";
+import http from "../../http";
 export default {
   name: "BaseList",
   props: {
@@ -134,7 +134,8 @@ export default {
       }
       if (this.tabParamsKey) params[this.tabParamsKey] = this.tabActive;
       this.tableLoading = true;
-      POST(this.url, params)
+      http
+        .POST(this.url, params)
         .then(({ data }) => {
           this.tableData = data[this.primaryKey];
           this.total = data?.total;

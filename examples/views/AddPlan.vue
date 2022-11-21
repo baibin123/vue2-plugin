@@ -18,14 +18,21 @@
       />
     </template>
     <template #actions>
-      <el-button @click="close">取消</el-button>
-      <el-button type="primary" @click="saveClick">保存</el-button>
+      <base-execute>取消</base-execute>
+      <base-execute
+        type="primary"
+        url="/portal/api/dryingPlan/editDryingPlan"
+        :params="formModel"
+        closable
+        @on-finish="onFinish"
+        >保存</base-execute
+      >
     </template>
   </base-form>
 </template>
 
 <script>
-import { POST } from "../../packages/http";
+import http from "../../packages/http";
 
 export default {
   name: "AddPlan",
@@ -121,6 +128,7 @@ export default {
         },
       ],
       formModel: {},
+      formParams: {},
     };
   },
   created() {
@@ -169,20 +177,20 @@ export default {
     },
     saveClick() {
       if (this.data.planOrderNo) {
-        POST("/portal/api/dryingPlan/editDryingPlan", this.formModel).then(
-          () => {
+        http
+          .POST("/portal/api/dryingPlan/editDryingPlan", this.formModel)
+          .then(() => {
             this.$message({ type: "success", message: "修改成功" });
             this.$emit("success", false);
             this.close();
-          }
-        );
+          });
       } else {
         //新增
         const params = {
           ...this.formModel,
           planTotalQuantity: this.formModel.planTotalQuantity * 1000,
         };
-        POST("/portal/api/dryingPlan/addDryingPlan", params).then(() => {
+        http.POST("/portal/api/dryingPlan/addDryingPlan", params).then(() => {
           this.$message({ type: "success", message: "新增成功" });
           this.close();
         });
@@ -190,6 +198,9 @@ export default {
     },
     close() {
       this.$emit("update:visible", false);
+    },
+    onFinish(e) {
+      this.$emit("on-finish", e);
     },
   },
 };

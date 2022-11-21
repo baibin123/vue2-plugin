@@ -33,7 +33,7 @@
 let fields = { planOrderNo: "计划单号", createTime: "创建日期"}
 let columns = [
   "planOrderNo",
-  { prop: "createTime", label:"创建时间", width: "100" }
+  { prop: "planTime", label:"创建时间", width: "100" }
 ]
 ```
 

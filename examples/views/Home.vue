@@ -17,9 +17,7 @@
             />
           </template>
           <template #query-other-btn>
-            <el-button type="primary" @click="detailClick({})">
-              新增计划
-            </el-button>
+            <base-drawer label="新建计划" :component="AddPlan" />
           </template>
         </base-form>
       </template>
@@ -30,21 +28,9 @@
         <span>{{ row.status | status }}</span>
       </template>
       <template #action="{ row }">
-        <el-button type="primary" @click="detailClick(row)">详情</el-button>
+        <base-drawer label="修改计划" :component="AddPlan" :data="row" />
       </template>
     </base-list>
-    <el-drawer
-      title="新建计划"
-      :visible.sync="visible"
-      size="80%"
-      destroy-on-close
-    >
-      <add-plan
-        :visible.sync="visible"
-        :data="selectedData"
-        @success="success"
-      />
-    </el-drawer>
   </div>
 </template>
 
@@ -52,9 +38,9 @@
 import AddPlan from "./AddPlan";
 export default {
   name: "Home",
-  components: { AddPlan },
   data() {
     return {
+      AddPlan,
       fields: {
         planOrderNo: "计划单号",
         createTime: "创建日期",
@@ -132,10 +118,6 @@ export default {
     },
   },
   methods: {
-    detailClick(data) {
-      this.selectedData = data;
-      this.visible = true;
-    },
     success() {
       this.$refs.list.reload();
     },

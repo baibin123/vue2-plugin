@@ -4,7 +4,6 @@
     v-bind="$attrs"
     v-on="$listeners"
     :label-position="labelPosition"
-    align="bottom"
     class="common-form"
   >
     <el-row :gutter="20" v-if="formConfig.length > 0">
@@ -140,11 +139,11 @@ export default {
 </script>
 
 <style scoped>
->>> .form-btn-container .el-form-item__label {
-  color: transparent;
-}
 .common-form {
   padding: 0 10px;
+}
+.common-form .form-btn-container >>> .el-form-item__label {
+  color: transparent !important;
 }
 .common-form >>> .el-form-item__label {
   padding: 0 !important;

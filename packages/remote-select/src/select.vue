@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { POST } from "../../http";
+import http from "../../http";
 import { isEqual } from "../../util/common";
 
 export default {
@@ -114,7 +114,8 @@ export default {
         [this.searchKey]: query,
       };
       this.loading = true;
-      POST(this.url, params)
+      http
+        .POST(this.url, params)
         .then((res) => {
           this.loading = false;
           this.options = res[this.primaryKey].map((item) => {
