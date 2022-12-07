@@ -3,6 +3,8 @@
 - [x] 支持配置 支持el-table 所有属性配置。注意：columns与el-table自带插槽不支持同时使用
 ```javascript
 columns = [
+  "age",
+  { id: "100px" },
   { prop: "name", label: "姓名" },
   { prop: "date", label: "出生日期" }
 ]

@@ -20,7 +20,12 @@
       </el-table-column>
     </template>
     <!--  操作列    -->
-    <el-table-column v-if="$scopedSlots.action" fixed="right" label="操作">
+    <el-table-column
+      v-if="$scopedSlots.action"
+      :width="actionWidth"
+      fixed="right"
+      label="操作"
+    >
       <template slot-scope="scope">
         <slot name="action" v-bind="scope" />
       </template>
@@ -46,6 +51,10 @@ export default {
       type: Object,
       default: () => {},
     },
+    actionWidth: {
+      type: String,
+      default: "100px",
+    },
   },
   data() {
     return {
@@ -59,6 +68,9 @@ export default {
         nv?.forEach((item) => {
           if (typeof item === "string") {
             this.innerColumns.push({ prop: item });
+          } else if (Object.keys(item).length === 1) {
+            const [key] = Object.keys(item);
+            this.innerColumns.push({ prop: key, width: item[key] });
           } else {
             this.innerColumns.push(item);
           }

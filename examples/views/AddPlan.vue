@@ -18,12 +18,14 @@
       />
     </template>
     <template #actions>
-      <base-execute>取消</base-execute>
+      <base-execute closable>取消</base-execute>
       <base-execute
         type="primary"
         url="/portal/api/dryingPlan/editDryingPlan"
-        :params="formModel"
+        :params="params"
         closable
+        refresh-list
+        @before-submit="beforeSubmit"
         @on-finish="onFinish"
         >保存</base-execute
       >
@@ -32,7 +34,7 @@
 </template>
 
 <script>
-import http from "../../packages/http";
+import { cloneDeep } from "../../packages/util/common";
 
 export default {
   name: "AddPlan",
@@ -128,12 +130,14 @@ export default {
         },
       ],
       formModel: {},
+      params: {},
       formParams: {},
     };
   },
   created() {
     if (this.data?.planOrderNo) {
       this.formModel = this.data;
+      this.params = this.data;
       const { executionCompanyCode } = this.data;
       if (executionCompanyCode) {
         this.formConfig.$get("siteCode").params = {
@@ -157,6 +161,7 @@ export default {
   },
   methods: {
     changeForm(key, data) {
+      this.params = cloneDeep(this.formModel);
       if (key === "executionCompanyCode" && data) {
         this.formConfig.$get("siteCode").params = { level: 2, ids: [data.id] };
         this.formConfig.$get("materialId").params = { companyIds: [data.id] };
@@ -165,6 +170,8 @@ export default {
         this.formModel.productNameCode = data.nameId;
         this.formModel.productCategories = data.typeId;
         this.$forceUpdate();
+      } else if (key === "planTotalQuantity") {
+        this.params.planTotalQuantity = this.params.planTotalQuantity * 1000;
       }
     },
     focusForm(key) {
@@ -175,30 +182,10 @@ export default {
         this.$message({ type: "error", message: "请先选择执行单位" });
       }
     },
-    saveClick() {
-      if (this.data.planOrderNo) {
-        http
-          .POST("/portal/api/dryingPlan/editDryingPlan", this.formModel)
-          .then(() => {
-            this.$message({ type: "success", message: "修改成功" });
-            this.$emit("success", false);
-            this.close();
-          });
-      } else {
-        //新增
-        const params = {
-          ...this.formModel,
-          planTotalQuantity: this.formModel.planTotalQuantity * 1000,
-        };
-        http.POST("/portal/api/dryingPlan/addDryingPlan", params).then(() => {
-          this.$message({ type: "success", message: "新增成功" });
-          this.close();
-        });
-      }
-    },
     close() {
       this.$emit("update:visible", false);
     },
+    beforeSubmit() {},
     onFinish(e) {
       this.$emit("on-finish", e);
     },

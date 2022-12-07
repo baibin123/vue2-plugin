@@ -2,6 +2,7 @@
   <div>
     <base-list
       ref="list"
+      action-width="125px"
       url="/portal/api/dryingPlan/findDryingPlan"
       :tabs="tabs"
       tabParamsKey="status"
@@ -87,7 +88,7 @@ export default {
         },
       ],
       columns: [
-        "planOrderNo",
+        { planOrderNo: "200px" },
         "createTime",
         "sourceName",
         "executionCompanyName",
