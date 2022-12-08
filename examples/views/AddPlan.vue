@@ -137,6 +137,7 @@ export default {
   created() {
     if (this.data?.planOrderNo) {
       this.formModel = this.data;
+      this.formModel.planTotalQuantity = this.data.planTotalQuantity / 1000;
       this.params = this.data;
       const { executionCompanyCode } = this.data;
       if (executionCompanyCode) {

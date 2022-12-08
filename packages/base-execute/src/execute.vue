@@ -47,6 +47,14 @@ export default {
       default: "取消",
     },
     confirm: String,
+    confirmButtonText: {
+      type: String,
+      default: "确定",
+    },
+    cancelButtonText: {
+      type: String,
+      default: "取消",
+    },
     params: Object,
     closable: {
       type: Boolean,
@@ -88,8 +96,8 @@ export default {
       }
       if (this.confirm) {
         this.$confirm(this.confirm, "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
+          confirmButtonText: this.confirmButtonText,
+          cancelButtonText: this.cancelButtonText,
           type: "warning",
         })
           .then(async () => {

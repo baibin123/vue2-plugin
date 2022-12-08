@@ -1,6 +1,6 @@
 <template>
   <span style="padding: 0 10px">
-    <el-button :type="type" @click="drawer = true">{{ label }}</el-button>
+    <el-button :type="type" :disabled="disabled" @click="onClick">{{ text }}</el-button>
     <el-drawer
       :visible.sync="drawer"
       v-bind="$attrs"
@@ -9,9 +9,7 @@
       :size="size"
       append-to-body
     >
-      <div style="background: #fff">
-        <component :is="component" :data="data"></component>
-      </div>
+      <component :is="component" :data="data"></component>
     </el-drawer>
   </span>
 </template>
@@ -36,10 +34,6 @@ export default {
       type: [String, Number],
       default: "75%",
     },
-    label: {
-      type: String,
-      required: true,
-    },
     type: {
       type: String,
       default: "primary",
@@ -48,11 +42,44 @@ export default {
       type: Boolean,
       default: true,
     },
+    confirm: String,
+    confirmButtonText: {
+      type: String,
+      default: "确定",
+    },
+    cancelButtonText: {
+      type: String,
+      default: "取消",
+    },
+    disabled: Boolean
   },
   data() {
     return {
       drawer: false,
     };
+  },
+  computed: {
+    text() {
+      const [{ text }] = this.$slots.default;
+      return text;
+    },
+  },
+  methods: {
+    onClick() {
+      if (this.confirm) {
+        this.$confirm(this.confirm, "提示", {
+          confirmButtonText: this.confirmButtonText,
+          cancelButtonText: this.cancelButtonText,
+          type: "warning",
+        })
+          .then(async () => {
+            this.drawer = true;
+          })
+          .catch(() => {});
+      } else {
+        this.drawer = true;
+      }
+    },
   },
 };
 </script>

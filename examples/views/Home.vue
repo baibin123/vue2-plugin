@@ -1,8 +1,7 @@
 <template>
   <div>
     <base-list
-      ref="list"
-      action-width="125px"
+      action-width="160px"
       url="/portal/api/dryingPlan/findDryingPlan"
       :tabs="tabs"
       tabParamsKey="status"
@@ -18,7 +17,9 @@
             />
           </template>
           <template #query-other-btn>
-            <base-drawer label="新建计划" :component="AddPlan" />
+            <base-drawer :component="AddPlan" title="新建计划"
+              >新建计划</base-drawer
+            >
           </template>
         </base-form>
       </template>
@@ -28,8 +29,27 @@
       <template #status="{ row }">
         <span>{{ row.status | status }}</span>
       </template>
+      <template #planMarginQuantity="{ row }">
+        <span>{{ row.planMarginQuantity / 1000 }}</span>
+      </template>
       <template #action="{ row }">
-        <base-drawer label="修改计划" :component="AddPlan" :data="row" />
+        <base-drawer
+          title="修改计划"
+          type="text"
+          :component="AddPlan"
+          :data="row"
+        >
+          修改计划
+        </base-drawer>
+        <base-drawer
+          :component="AddPlan"
+          title="新增烘干任务"
+          type="text"
+          confirm="是否确认创建烘干任务？"
+          disabled
+        >
+          执行
+        </base-drawer>
       </template>
     </base-list>
   </div>
@@ -116,11 +136,6 @@ export default {
     status(val) {
       if (val === 1) return "代执行";
       else return "已执行";
-    },
-  },
-  methods: {
-    success() {
-      this.$refs.list.reload();
     },
   },
 };

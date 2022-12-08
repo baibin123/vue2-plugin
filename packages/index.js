@@ -5,8 +5,6 @@ import BaseTable from "./base-table";
 import BasePagination from "./base-pagination";
 import BaseForm from "./base-form";
 import BaseList from "./base-list";
-import BaseSelect from "./base-select";
-import BaseInput from "./base-input";
 import RemoteSelect from "./remote-select";
 import BaseDrawer from "./base-drawer";
 import BaseExecute from "./base-execute";
@@ -19,8 +17,6 @@ const components = [
   BasePagination,
   BaseForm,
   BaseList,
-  BaseSelect,
-  BaseInput,
   RemoteSelect,
   GoodSelect,
   DictSelect,
@@ -44,8 +40,6 @@ export default {
   BasePagination,
   BaseForm,
   BaseList,
-  BaseSelect,
-  BaseInput,
   RemoteSelect,
   GoodSelect,
   DictSelect,
