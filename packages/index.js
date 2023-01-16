@@ -1,5 +1,6 @@
 //数组原型
 import "./util/array.prototype";
+import * as common from "./util/common";
 //公用组件
 import BaseTable from "./base-table";
 import BasePagination from "./base-pagination";
@@ -45,4 +46,5 @@ export default {
   DictSelect,
   BaseDrawer,
   BaseExecute,
+  ...common,
 };

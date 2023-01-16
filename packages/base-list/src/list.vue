@@ -17,6 +17,7 @@
         <base-table
           :table-data="tableData"
           v-loading="tableLoading"
+          :url="url"
           v-bind="$attrs"
           v-on="$listeners"
         >
@@ -30,6 +31,7 @@
       v-else
       :table-data="tableData"
       v-loading="tableLoading"
+      :url="url"
       v-bind="$attrs"
       v-on="$listeners"
     >
