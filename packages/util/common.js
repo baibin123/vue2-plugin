@@ -30,6 +30,14 @@ const removeStoreData = function (key) {
   window.localStorage.removeItem(key);
 };
 
+const uniqueKey = (function () {
+  let i = 1;
+  return function () {
+    i++;
+    return `base_key_${i++}`;
+  };
+})();
+
 export {
   clearStoreData,
   setStoreData,
@@ -37,4 +45,5 @@ export {
   removeStoreData,
   isEqual,
   cloneDeep,
+  uniqueKey,
 };

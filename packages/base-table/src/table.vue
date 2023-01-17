@@ -20,13 +20,13 @@
       <template v-for="col of innerColumns">
         <el-table-column
           v-if="!$scopedSlots[col.prop]"
-          :key="col.prop"
+          :key="col.key"
           :label="col.label || (fields && fields[col.prop])"
           v-bind="col"
         />
         <el-table-column
           v-else-if="$scopedSlots[col.prop]"
-          :key="col.prop"
+          :key="col.key"
           :label="col.label || (fields && fields[col.prop])"
           v-bind="col"
         >
@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import { getStoreData } from "../../util/common";
+import { getStoreData, uniqueKey } from "../../util/common";
 import CustomerHeader from "./components/customer-header";
 export default {
   name: "BaseTable",
@@ -133,7 +133,7 @@ export default {
               const label = item.label || this.fields[item.prop];
               return label === conf.label;
             });
-            return { ...col, ...conf };
+            return { ...col, ...conf, key: uniqueKey() };
           });
       } else {
         this.resetColumns(this.columns);
@@ -141,14 +141,11 @@ export default {
           const label = item.label || this.fields[item.prop];
           item.label = label;
           item.checked = true;
+          item.key = item.prop;
           return item;
         });
       }
-      this.showTable = false;
-      setTimeout(() => {
-        this.showTable = true;
-        this.setTableConfigStyle();
-      }, 0);
+      this.setTableConfigStyle();
     },
   },
 };

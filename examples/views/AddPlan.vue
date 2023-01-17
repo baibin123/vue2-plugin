@@ -183,9 +183,6 @@ export default {
         this.$message({ type: "error", message: "请先选择执行单位" });
       }
     },
-    close() {
-      this.$emit("update:visible", false);
-    },
     beforeSubmit() {},
     onFinish(e) {
       this.$emit("on-finish", e);
