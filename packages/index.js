@@ -1,5 +1,6 @@
 //数组原型
 import "./util/array.prototype";
+import "./util/common.scss";
 import * as common from "./util/common";
 //公用组件
 import BaseTable from "./base-table";

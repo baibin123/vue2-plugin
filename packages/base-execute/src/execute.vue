@@ -1,5 +1,5 @@
 <template>
-  <span>
+  <span class="base-space">
     <el-popconfirm
       v-if="tip"
       :confirm-button-text="tipConfirmText"
@@ -142,5 +142,3 @@ export default {
   },
 };
 </script>
-
-<style scoped></style>

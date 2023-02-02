@@ -1,6 +1,8 @@
 <template>
-  <span style="padding: 0 10px">
-    <el-button :type="type" :disabled="disabled" @click="onClick">{{ text }}</el-button>
+  <span class="base-space">
+    <el-button :type="type" :disabled="disabled" @click="onClick">{{
+      text
+    }}</el-button>
     <el-drawer
       :visible.sync="drawer"
       v-bind="$attrs"
@@ -51,7 +53,7 @@ export default {
       type: String,
       default: "取消",
     },
-    disabled: Boolean
+    disabled: Boolean,
   },
   data() {
     return {
@@ -83,5 +85,3 @@ export default {
   },
 };
 </script>
-
-<style scoped></style>

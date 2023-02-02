@@ -78,9 +78,6 @@ export default {
       },
       immediate: true,
     },
-    productNameParams(nv, ov) {
-      console.log("*****", nv, "***", ov);
-    },
     productNameCode: {
       handler(nv) {
         this.innerProductNameCode = nv;

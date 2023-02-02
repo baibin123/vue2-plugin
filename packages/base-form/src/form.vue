@@ -139,6 +139,9 @@ export default {
 </script>
 
 <style scoped>
+.el-col {
+  min-height: 82.5px;
+}
 .common-form {
   padding: 0 10px;
 }

@@ -33,8 +33,7 @@ const removeStoreData = function (key) {
 const uniqueKey = (function () {
   let i = 1;
   return function () {
-    i++;
-    return `base_key_${i++}`;
+    return `BASE_KEY_${i++}`;
   };
 })();
 

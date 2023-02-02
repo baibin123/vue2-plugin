@@ -123,6 +123,7 @@ export default {
         };
       });
     },
+    //列配置
     resetColumnsConfig() {
       const listConfig = getStoreData("_listConfig_")?.[this.url];
       if (listConfig?.length > 0) {
