@@ -30,6 +30,10 @@ export default {
       from: "baseList",
       default: null,
     },
+    baseForm: {
+      from: "baseForm",
+      default: null,
+    },
   },
   props: {
     url: String,
@@ -61,6 +65,10 @@ export default {
       default: false,
     },
     refreshList: {
+      type: Boolean,
+      default: false,
+    },
+    validateForm: {
       type: Boolean,
       default: false,
     },
@@ -107,13 +115,19 @@ export default {
           .catch(() => {});
       } else {
         await this.$emit("before-submit");
-        this.submit();
+        await this.submit();
       }
     },
     onCancel() {
       this.$emit("on-cancel");
     },
-    submit() {
+    async submit() {
+      if (this.validateForm) {
+        if (!this.baseForm)
+          throw new Error("validateForm属性必须使用在Form表单内部");
+        const validate = await this.baseForm.validateForm();
+        if (!validate) return;
+      }
       if (this.url) {
         this.innerLoading = true;
         http[this.mode.toUpperCase()](this.url, this.params)

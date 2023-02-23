@@ -1,8 +1,10 @@
 <template>
   <base-form
     ref="baseForm"
+    :rules="rules"
     :form-config="formConfig"
     :model="formModel"
+    anchor-key="plain"
     :form-span="12"
     :btn-span="24"
     style="padding: 0 20px"
@@ -25,6 +27,7 @@
         :params="params"
         closable
         refresh-list
+        validate-form
         @before-submit="beforeSubmit"
         @on-finish="onFinish"
         >保存</base-execute
@@ -129,6 +132,13 @@ export default {
           kind: "input",
         },
       ],
+      rules: {
+        executionCompanyCode: {
+          required: true,
+          message: "请选择执行单位",
+          trigger: "change",
+        },
+      },
       formModel: {},
       params: {},
       formParams: {},
@@ -170,7 +180,6 @@ export default {
         this.formModel.goodsAttribute = data.propId;
         this.formModel.productNameCode = data.nameId;
         this.formModel.productCategories = data.typeId;
-        this.$forceUpdate();
       } else if (key === "planTotalQuantity") {
         this.params.planTotalQuantity = this.params.planTotalQuantity * 1000;
       }

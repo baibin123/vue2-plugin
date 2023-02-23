@@ -1,7 +1,7 @@
 <template>
   <span>
     <el-col :span="span">
-      <el-form-item label="货品类别">
+      <el-form-item label="货品类别" prop="productCategories">
         <remote-select
           :disabled="disabled"
           v-model="innerProductCategories"

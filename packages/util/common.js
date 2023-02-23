@@ -1,5 +1,6 @@
 import cloneDeep from "./lodash.clonedeep";
 import isEqual from "./lodash.isequal";
+import debounce from "./lodash.debounce";
 
 const clearStoreData = function () {
   window.localStorage.clear();
@@ -45,4 +46,5 @@ export {
   isEqual,
   cloneDeep,
   uniqueKey,
+  debounce,
 };

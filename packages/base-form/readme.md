@@ -2,12 +2,14 @@
 
 - [x] 支持配置 基本支持el-form所有属性配置，额外配置如下
 - formConfig: 表单配置
+- modal: _注意赋初值不能为undefined或null_
 - fields: 表单label
 - query: 代表是否是查询表单
 - formSpan: formSpan
 - showBtn: 是否显示按钮
 - btnSpan: 按钮span
 - labelPosition: label的位置，默认TOP
+- anchor-key: 锚点，用于滚动到校验有问题的字段，注意需要保证全局唯一
 ```javascript
 let fields = { name: "姓名" }
 let formConfig = [
