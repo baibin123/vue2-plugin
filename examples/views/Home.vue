@@ -1,7 +1,6 @@
 <template>
   <div>
     <base-list
-      action-width="160px"
       url="/portal/api/dryingPlan/findDryingPlan"
       :tabs="tabs"
       tabParamsKey="status"
@@ -32,7 +31,16 @@
       <template #planMarginQuantity="{ row }">
         <span>{{ row.planMarginQuantity / 1000 }}</span>
       </template>
-      <template #action="{ row }">
+      <template #action="{ row, $index }">
+        <base-drawer
+          title="修改计划"
+          type="text"
+          :component="AddPlan"
+          :data="row"
+          v-if="$index % 2 === 0"
+        >
+          修改计划
+        </base-drawer>
         <base-drawer
           title="修改计划"
           type="text"

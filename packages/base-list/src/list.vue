@@ -13,6 +13,7 @@
         :key="t.name"
         :label="t.label"
         :name="`${t.name}`"
+        lazy
       >
         <base-table
           :table-data="tableData"

@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <customer-header
-      :columns="innerColumns"
+      :columns="columns"
       :fields="fields"
       :url="url"
       :style="customerHeaderStyle"
@@ -10,7 +10,7 @@
     <el-table
       class="base-table"
       :data="tableData"
-      v-if="showTable"
+      ref="baseTableRef"
       border
       stripe
       v-bind="$attrs"
@@ -21,13 +21,13 @@
         <el-table-column
           v-if="!$scopedSlots[col.prop]"
           :key="col.key"
-          :label="col.label || (fields && fields[col.prop])"
+          :label="col.label"
           v-bind="col"
         />
         <el-table-column
           v-else-if="$scopedSlots[col.prop]"
           :key="col.key"
-          :label="col.label || (fields && fields[col.prop])"
+          :label="col.label"
           v-bind="col"
         >
           <template slot-scope="scope">
@@ -38,12 +38,14 @@
       <!--  操作列    -->
       <el-table-column
         v-if="$scopedSlots.action"
-        :width="actionWidth"
+        :width="actionWidth || innerActionWidth"
         fixed="right"
         label="操作"
       >
         <template slot-scope="scope">
-          <slot name="action" v-bind="scope" />
+          <div class="action-column-container">
+            <slot name="action" v-bind="scope" />
+          </div>
         </template>
       </el-table-column>
       <!--  原生element table 支持  注意：不与上面同时支持  -->
@@ -58,7 +60,12 @@
 </template>
 
 <script>
-import { getStoreData, uniqueKey } from "../../util/common";
+import {
+  getStoreData,
+  uniqueKey,
+  setStoreData,
+  isEqual,
+} from "../../util/common";
 import CustomerHeader from "./components/customer-header";
 export default {
   name: "BaseTable",
@@ -72,81 +79,109 @@ export default {
       default: () => {},
     },
     url: String,
-    actionWidth: {
-      type: String,
-      default: "100px",
-    },
+    actionWidth: String,
   },
   data() {
     return {
       innerColumns: [],
+      innerActionWidth: "100",
       customerHeaderStyle: {},
-      showTable: true,
     };
   },
   watch: {
     columns: {
-      handler(nv) {
-        this.innerColumns = [];
-        this.resetColumns(nv);
-        this.resetColumnsConfig();
+      handler(nv, ov) {
+        if (!isEqual(nv, ov)) {
+          this.resetColumns();
+          this.resetColumnsConfig();
+        }
       },
       immediate: true,
+      deep: true,
+    },
+    tableData(nv, ov) {
+      if (!isEqual(nv, ov)) {
+        this.$nextTick(() => this.setTableConfigStyle());
+      }
     },
   },
   methods: {
-    resetColumns(nv) {
+    resetColumns() {
       this.innerColumns = [];
-      nv?.forEach((item) => {
+      this.columns.forEach((item, index) => {
+        const key = `${item.prop}_${index}`;
         if (typeof item === "string") {
           //简单写法，['prop']
-          this.innerColumns.push({ prop: item });
+          this.innerColumns.push({ prop: item, label: this.fields[item], key });
         } else if (Object.keys(item).length === 1) {
           // 简单写法 [{prop: '100px'}]
-          const [key] = Object.keys(item);
-          this.innerColumns.push({ prop: key, width: item[key] });
+          const [prop] = Object.keys(item);
+          this.innerColumns.push({
+            prop,
+            label: this.fields[prop],
+            width: item[prop],
+            key,
+          });
         } else {
           //多配置写法[{prop: '', label: '', ...}]
+          item.key = key;
           this.innerColumns.push(item);
         }
       });
     },
-    setTableConfigStyle() {
-      this.$nextTick(() => {
-        const headerHeight =
-          document.getElementsByTagName("thead")[0]?.offsetHeight;
-        this.customerHeaderStyle = {
-          position: "absolute",
-          top: `${(headerHeight - 16) / 2}px`,
-          right: "10px",
-          zIndex: 999,
-        };
-      });
-    },
     //列配置
     resetColumnsConfig() {
-      const listConfig = getStoreData("_listConfig_")?.[this.url];
+      this.resetColumns(this.columns);
+      let listConfig = getStoreData("_listConfig_")?.[this.url];
       if (listConfig?.length > 0) {
-        this.innerColumns = listConfig
-          .filter((conf) => conf.checked)
-          .map((conf) => {
-            const col = this.innerColumns.find((item) => {
-              const label = item.label || this.fields[item.prop];
-              return label === conf.label;
-            });
-            return { ...col, ...conf, key: uniqueKey() };
+        //判断，如果缓存里有的列，在columns里没有，则认为这一列为脏数据，移除并重新缓存
+        const filterArray = listConfig.filter((item) =>
+          this.innerColumns.some((sub) => sub.prop === item.prop)
+        );
+        if (filterArray.length !== listConfig.length) {
+          listConfig = filterArray;
+          setStoreData("_listConfig_", {
+            [this.url]: listConfig,
           });
-      } else {
-        this.resetColumns(this.columns);
-        this.innerColumns = this.innerColumns.map((item) => {
-          const label = item.label || this.fields[item.prop];
-          item.label = label;
-          item.checked = true;
-          item.key = item.prop;
-          return item;
-        });
+        }
+        //判断，如果columns有的列，listConfig没有，则为新增的列。加入缓存，checked赋值为true
+        const newArray = this.innerColumns
+          .filter((item) => !listConfig.some((sub) => sub.prop === item.prop))
+          .map((item) => ({ ...item, checked: true }));
+        if (newArray.length > 0) {
+          listConfig = [...listConfig, ...newArray];
+          setStoreData("_listConfig_", {
+            [this.url]: listConfig,
+          });
+        }
+        this.innerColumns = listConfig
+          .filter((item) => item.checked)
+          .map((item) => ({
+            ...this.innerColumns.$get(item.prop),
+            key: uniqueKey(),
+          }));
       }
-      this.setTableConfigStyle();
+    },
+    setTableConfigStyle() {
+      const tableDom = this.$refs.baseTableRef.$el;
+      //设置按钮位置
+      const headerHeight =
+        tableDom.getElementsByTagName("thead")[0]?.offsetHeight;
+      //如果headerHeight == 0 表示有tabs，且不是当前选中的tab页面
+      if (headerHeight === 0) return;
+      this.customerHeaderStyle = {
+        position: "absolute",
+        top: `${(headerHeight - 16) / 2}px`,
+        right: "10px",
+        zIndex: 999,
+      };
+      //设置action宽度
+      const actionWidths = [
+        ...tableDom.getElementsByClassName("action-column-container"),
+      ]
+        .map((item) => item.offsetWidth)
+        .sort();
+      this.innerActionWidth = actionWidths?.[0] + 20;
     },
   },
 };
@@ -155,5 +190,11 @@ export default {
 <style scoped>
 .container {
   position: relative;
+}
+.action-column-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: fit-content;
 }
 </style>

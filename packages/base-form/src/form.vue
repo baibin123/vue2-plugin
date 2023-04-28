@@ -156,7 +156,7 @@ export default {
     scrollView: debounce((id) => {
       document
         .getElementById(id)
-        .scrollIntoView({ block: "start", behavior: "smooth" });
+        ?.scrollIntoView({ block: "start", behavior: "smooth" });
     }, 300),
     onSave() {
       this.$emit("on-save", this.innerModel);
