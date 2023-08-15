@@ -1,34 +1,40 @@
-import { getStoreData } from "../util/common";
-import { Message } from "element-ui";
-const token = getStoreData("token");
-const baseUrl = "https://t-waasapi.xydti.com";
-const POST = (url, params, showErr = true) => {
-  return new Promise((resolve, reject) => {
-    fetch(baseUrl + url, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(params),
-    })
-      .then(async (response) => {
-        const res = await response.json();
-        if (res.success) {
-          resolve(res);
-        } else {
-          if (res?.fail?.message && showErr) {
-            Message.error(res.fail.message);
-          }
-          reject(res.fail);
-        }
-      })
-      .catch((err) => {
-        reject(err);
-      });
+import service from "./service";
+
+import config from "./config";
+
+const { defaultHeaders } = config;
+
+const request = (option) => {
+  const { url, method, params, data, headersType, responseType } = option;
+  return service.request({
+    url: url,
+    method,
+    params,
+    data,
+    responseType: responseType,
+    headers: {
+      "Content-Type": headersType || defaultHeaders,
+    },
   });
 };
 
 export default {
-  POST,
+  get: (option) => {
+    return request({ method: "get", ...option });
+  },
+  post: (option) => {
+    return request({ method: "post", ...option });
+  },
+  delete: (option) => {
+    return request({ method: "delete", ...option });
+  },
+  put: (option) => {
+    return request({ method: "put", ...option });
+  },
+  cancelRequest: (url) => {
+    return service.cancelRequest(url);
+  },
+  cancelAllRequest: () => {
+    return service.cancelAllRequest();
+  },
 };

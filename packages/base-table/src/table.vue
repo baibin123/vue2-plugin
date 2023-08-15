@@ -167,7 +167,7 @@ export default {
       //设置按钮位置
       const headerHeight =
         tableDom.getElementsByTagName("thead")[0]?.offsetHeight;
-      //如果headerHeight == 0 表示有tabs，且不是当前选中的tab页面
+      //如果headerHeight == 0 表示有tabs，且不是当前选中的tab页面,所以不需要设置action的宽度
       if (headerHeight === 0) return;
       this.customerHeaderStyle = {
         position: "absolute",

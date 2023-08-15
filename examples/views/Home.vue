@@ -31,16 +31,7 @@
       <template #planMarginQuantity="{ row }">
         <span>{{ row.planMarginQuantity / 1000 }}</span>
       </template>
-      <template #action="{ row, $index }">
-        <base-drawer
-          title="修改计划"
-          type="text"
-          :component="AddPlan"
-          :data="row"
-          v-if="$index % 2 === 0"
-        >
-          修改计划
-        </base-drawer>
+      <template #action="{ row }">
         <base-drawer
           title="修改计划"
           type="text"

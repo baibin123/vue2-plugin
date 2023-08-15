@@ -138,7 +138,7 @@ export default {
       if (this.tabParamsKey) params[this.tabParamsKey] = this.tabActive;
       this.tableLoading = true;
       http
-        .POST(this.url, params)
+        .post({ url: this.url, data: params })
         .then(({ data }) => {
           this.tableData = data[this.primaryKey];
           this.total = data?.total;

@@ -40,11 +40,13 @@ export default {
         dictKey: this.code,
         page: { pageNo: 1, pageSize: 10 },
       };
-      http.POST("/masterdata/api/dict/pageQuery", params).then(({ data }) => {
-        if (data.list.length > 0) {
-          this.options = JSON.parse(data.list[0].dictValue);
-        }
-      });
+      http
+        .post({ url: "/masterdata/api/dict/pageQuery", data: params })
+        .then(({ data }) => {
+          if (data.list.length > 0) {
+            this.options = JSON.parse(data.list[0].dictValue);
+          }
+        });
     },
     change() {
       this.$emit("change", this.innerValue);

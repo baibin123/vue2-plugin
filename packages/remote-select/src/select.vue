@@ -115,7 +115,7 @@ export default {
       };
       this.loading = true;
       http
-        .POST(this.url, params)
+        .post({ url: this.url, data: params })
         .then((res) => {
           this.loading = false;
           this.options = res[this.primaryKey].map((item) => {
