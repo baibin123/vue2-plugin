@@ -62,6 +62,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    method: {
+      type: String,
+      default: "post",
+    },
     primaryKey: {
       type: String,
       default: "data",
@@ -115,7 +119,7 @@ export default {
       };
       this.loading = true;
       http
-        .post({ url: this.url, data: params })
+        .request({ url: this.url, data: params, method: this.method })
         .then((res) => {
           this.loading = false;
           this.options = res[this.primaryKey].map((item) => {
@@ -128,10 +132,7 @@ export default {
             };
           });
         })
-        .catch((err) => {
-          this.loading = false;
-          return err;
-        });
+        .finally(() => (this.loading = false));
     },
     change(value) {
       this.$emit("change", this.innerValue);

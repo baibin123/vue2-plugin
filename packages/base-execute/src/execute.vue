@@ -72,7 +72,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    mode: {
+    method: {
       type: String,
       default: "post",
     },
@@ -110,7 +110,7 @@ export default {
         })
           .then(async () => {
             await this.$emit("before-submit");
-            this.submit();
+            await this.submit();
           })
           .catch(() => {});
       } else {
@@ -130,10 +130,14 @@ export default {
       }
       if (this.url) {
         this.innerLoading = true;
-        http[this.mode.toUpperCase()](this.url, this.params)
+        http
+          .request({ url: this.url, data: this.params, method: this.method })
           .then((res) => {
             this.closeDrawer();
             this.refreshTableList();
+            this.$message.success(
+              this.text ? `${this.text}成功！` : "操作成功！"
+            );
             this.$emit("on-finish", res);
           })
           .finally(() => {

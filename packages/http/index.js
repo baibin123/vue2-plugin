@@ -37,4 +37,5 @@ export default {
   cancelAllRequest: () => {
     return service.cancelAllRequest();
   },
+  request,
 };
